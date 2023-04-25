@@ -5,7 +5,7 @@ const options = ['紅', '綠', '橘', '藍', '黃', '棕', 'F', 'R', 'T', '幹�
 
 function DropdownMenu() {
 	return (
-		<div className="hidden 
+		<div className="hidden
 		md:block w-8/12 mx-auto
 		lg:w-1/2">
 			<div className="z-10 bg-white border border-gray-300 rounded-md px-3 py-4 w-1/2 mx-auto grid grid-cols-9 gap-3 justify-center justify-items-center 
