@@ -1,15 +1,15 @@
 import { IoSearch } from "react-icons/io5";
 import { useState } from "react";
 
+
 const options = ['紅', '綠', '橘', '藍', '黃', '棕', 'F', 'R', 'T', '幹線', '先導'];
 
+
 function DropdownMenu() {
-	return (
-		<div className="hidden
-		md:block w-8/12 mx-auto
-		lg:w-1/2">
-			<div className="z-10 bg-white border border-gray-300 rounded-md px-3 py-4 w-1/2 mx-auto grid grid-cols-9 gap-3 justify-center justify-items-center 
-			md:w-full">
+	return (<>
+		<div className="hidden md:block absolute left-1/3 top-12 z-10 mt-2 w-auto origin-top-right rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none
+       lg:right-1/4">
+			<div className="grid grid-cols-7 gap-2 py-3 px-3">
 				{options.map((option, index) => (
 					<button
 						key={index}
@@ -20,18 +20,21 @@ function DropdownMenu() {
 				))}
 			</div>
 		</div>
+	</>
 	);
 }
 
 
-const SearchBarDark = () => {
+
+
+const SearchBarDark = (props) => {
 	const [isOpen, setIsOpen] = useState(false);
 
+
 	return (<>
-		<div className="bg-nav-dark pb-3">
-			<div className="grid grid-cols-3 divide-x divide-gray-300 py-1.5 w-10/12 mx-auto rounded-lg bg-searchbar-dark
-				md:w-8/12 lg:w-1/2">
-				<div className="relative">
+		<div className={`bg-nav-dark hidden md:w-10/12 ml-6 lg:ml-8 ${props.className}`}>
+			<div className="grid grid-cols-3 py-1.5 mx-auto rounded-lg bg-searchbar-dark">
+				<div>
 					<select name="dropdown" id="dropdown"
 						className="w-full text-gray-400 text-sm text-center rounded-l-lg bg-searchbar-dark focus:outline-none">
 						<option>台北市</option>
@@ -39,6 +42,8 @@ const SearchBarDark = () => {
 						<option>基隆市</option>
 					</select>
 				</div>
+
+
 				<div className="flex col-span-2 bg-searchbar-dark rounded-r-lg">
 					<input type="text" name="search" id="search" placeholder="搜尋公車路線"
 						className="w-full text-gray-300 text-sm text-left pl-2  bg-searchbar-dark focus:outline-none"
@@ -50,11 +55,13 @@ const SearchBarDark = () => {
 			</div>
 		</div>
 
+
 		{isOpen && (
 			<DropdownMenu />
 		)}
 	</>
 	)
 }
+
 
 export default SearchBarDark;

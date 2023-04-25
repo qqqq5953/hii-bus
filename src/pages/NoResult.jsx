@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
+
 const NoResult = () => {
 	return (
 		<>
@@ -15,6 +16,7 @@ const NoResult = () => {
 					<p className="text-nav-dark font-medium text-xl leading-8">Oh，找不到符合搜尋的結果，<br />
 						請再試看看其他的搜尋吧！</p>
 				</div>
+
 
 			</div>
 			<Footer />

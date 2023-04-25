@@ -1,8 +1,8 @@
 {
-  "name": "hi-bus",
+  "name": "hii-bus",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://lucie0417.github.io/hi-bus/",
+  "homepage": "https://github.com/lucie0417/hii-bus",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
