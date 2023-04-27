@@ -5,4 +5,24 @@
 
 body {
 	background-color: #F8F8FB;
+	height: 100%;
+	width: 100%;
+	overflow-x: hidden;
+	overflow-y: hidden;
 }
+
+.animate-slide{
+	animation-name: slide-right;  /*動畫名稱(自訂)*/
+    animation-duration: 15s;  /*一次完整動畫時間為x秒*/
+    animation-iteration-count: infinite;  /*播放次數為無限次*/
+    animation-direction: linear;  /*播放方向為先正向再反向*/
+}
+@keyframes slide-right {
+  from {
+    left: -20%;
+  }
+  to {
+    left: 100%;
+  }
+}
+      

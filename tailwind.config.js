@@ -14,12 +14,6 @@ module.exports = {
         'gradient-end': '#01D8D0',
         'highlight': '#00DCD1',
       },
-      keyframes: {
-        'slide-right': {
-          from: { transform: 'translateX(-100%)' },
-          to: { transform: 'translateX(0)' }
-        }
-      },
     },
     fontFamily: {
       chinese: ['Noto Sans TC', 'sans-serif'],

@@ -8,7 +8,6 @@ const Search = () => {
 		<>
 			<Navbar />
 
-
 			{/* 搜尋完才會往下推，可左右滑查看路線*/}
 			<div className="flex whitespace-nowrap bg-gray-100 h-14 overflow-x-scroll overflow-y-hidden items-center">
 				<p className="text-lg inline-block whitespace-nowrap pl-5 pr-2.5">
