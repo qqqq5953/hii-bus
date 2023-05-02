@@ -25,11 +25,7 @@ const Navbar = () => {
 			</div>
 			<SearchBarDark className="block md:hidden" />
 		</nav>
-
-
-		<div className="h-1.5 bg-gradient-to-r from-gradient-start to-gradient-end "></div>
-
-
+		<div className="h-1.5 animate-color "></div>
 	</>
 	)
 }

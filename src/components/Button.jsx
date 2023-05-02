@@ -1,13 +1,14 @@
 const Button = (props) => {
 	const style = {
 		display: 'flex',
-		width: '80px',
-		height: '36px',
+		width: '60px',
+		height: '30px',
 		borderRadius: '100px',
-		color: '#FFFFFF',
+		color: props.fontColor,
+		border: '1px solid #5468FF',
 		padding: '18px 8px',
 		outline: 0,
-		margin: '0px 4px',
+		fontSize: '14px',
 		alignItems: 'center',
 		justifyContent: 'center',
 		backgroundColor: props.backgroundColor,
@@ -15,7 +16,7 @@ const Button = (props) => {
 
 	return (
 		<>
-			<div style={style}>{props.children}</div>
+			<button style={style}>{props.children}</button>
 		</>
 	)
 }

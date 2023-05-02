@@ -12,10 +12,7 @@ body {
 }
 
 .animate-slide{
-	animation-name: slide-right;  /*動畫名稱(自訂)*/
-    animation-duration: 15s;  /*一次完整動畫時間為x秒*/
-    animation-iteration-count: infinite;  /*播放次數為無限次*/
-    animation-direction: linear;  /*播放方向為先正向再反向*/
+	  animation: slide-right 15s infinite linear; /*動畫名稱、一次動畫時間為幾秒、播放次數、播放方向*/
 }
 @keyframes slide-right {
   from {
@@ -24,5 +21,19 @@ body {
   to {
     left: 100%;
   }
+}
+
+.animate-color{
+  background-image: linear-gradient(45deg,#5468FF , #00DCD1);
+  background-size: 300%;
+  animation: line-animation 4s infinite alternate;
+}
+@keyframes line-animation{
+   0% {
+        background-position: left;
+    }
+    100%{
+        background-position: right;
+    }
 }
       

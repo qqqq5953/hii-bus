@@ -1,79 +1,81 @@
 import { IoArrowForwardOutline, IoHeart } from "react-icons/io5";
-import Footer from "./Footer";
-
 
 
 
 const BusInfo = () => {
 	return (
 		<>
-			<div className="w-5/6 py-6">
-				<p className="text-xs font-bold text-gradient-start md:hidden">台北市</p>
-				<div className="divide-y divide-gray-300">
-					<a role="button" href="https://www.google.com.tw/?hl=zh_TW" className="flex py-2 justify-between text-nav-dark tracking-wider md:hidden">
-						<div>
-							<h1 className="bus-number text-xl font-semibold leading-8">302</h1>
-							<div className="flex items-center">
-								<p>萬華  </p>
-								<span className="text-highlight"><IoArrowForwardOutline /></span>
-								<p>  北投</p>
-							</div>
+			<div className="bg-white w-full h-auto md:w-5/6 md:rounded-lg
+			lg:w-3/4">
+				<ul role="list" className="p-4 divide-y divide-slate-200 lg:px-10 py-6">
+					<li className="hidden 
+					md:flex text-left px-3 py-3 first:pt-0 text-gray-400">
+						<p className="w-1/3">公車路線</p>
+						<p className="w-1/3">起始站與終點站</p>
+						<p className="w-1/3 text-center">我的收藏</p>
+					</li>
+
+					{/* sm 介面 */}
+					<li className="flex px-3 py-3 first:pt-0 last:pb-0 md:hidden">
+						<div className="w-1/2 overflow-hidden">
+							<p className="font-bold text-nav-dark pb-1">302</p>
+							<p className="flex items-center text-nav-dark truncate tracking-wider">
+								萬華
+								<span className="text-highlight px-1"><IoArrowForwardOutline /></span>
+								北投
+							</p>
 						</div>
-						<button className="flex items-center">
-							<IoHeart className="text-2xl text-gray-300 " />
+						<button className="w-1/2 flex items-center justify-end">
+							<IoHeart className="text-2xl text-gray-300 active:text-highlight" />
 						</button>
-					</a>
-					<a role="button" href="https://www.google.com.tw/?hl=zh_TW" className="flex py-2 justify-between text-nav-dark tracking-wider md:hidden">
-						<div>
-							<h1 className="bus-number text-xl font-semibold leading-8">302</h1>
-							<div className="flex items-center">
-								<p>萬華  </p>
-								<span className="text-highlight"><IoArrowForwardOutline /></span>
-								<p>  北投</p>
-							</div>
+					</li>
+
+					<li className="flex px-3 py-3 first:pt-0 last:pb-0 md:hidden">
+						<div className="w-1/2 overflow-hidden">
+							<p className="font-bold text-nav-dark pb-1">302</p>
+							<p className="flex items-center text-nav-dark truncate tracking-wider">
+								萬華
+								<span className="text-highlight px-1"><IoArrowForwardOutline /></span>
+								北投
+							</p>
 						</div>
-						<button className="flex items-center">
-							<IoHeart className="text-2xl text-gray-300 " />
+						<button className="w-1/2 flex items-center justify-end">
+							<IoHeart className="text-2xl text-gray-300 active:text-highlight" />
 						</button>
-					</a>
-				</div>
+					</li>
 
+					{/* md & lg 介面 */}
+					<li className="hidden hover:bg-gray-100 
+					md:flex text-left px-3 py-4">
+						<p className="w-1/3 text-lg font-semibold text-nav-dark">605 新台五</p>
+						<div className="w-1/3">
+							<p className="flex items-center text-nav-dark text-md truncate">
+								萬華
+								<span className="text-highlight px-1"><IoArrowForwardOutline /></span>
+								北投
+							</p>
+						</div>
+						<button className="md:w-1/3 flex justify-center">
+							<IoHeart className="text-2xl text-gray-300 active:text-highlight" />
+						</button>
+					</li>
 
-
-
-				<div className="hidden md:block w-full bg-white px-3 pt-5 pb-3 rounded-lg shadow-lg ring-gray-300 ring-opacity-5">
-					<p className="text-xs font-bold text-gradient-start ">台北市</p>
-					<a role="button" href="https://www.google.com.tw/?hl=zh_TW" className="flex py-2 justify-between text-nav-dark tracking-wider">
-						<div>
-							<h1 className="text-xl font-semibold leading-8">302</h1>
-							<div className="flex items-center">
-								<p>萬華  </p>
-								<span className="text-highlight"><IoArrowForwardOutline /></span>
-								<p>  北投</p>
-							</div>
+					<li className="hidden hover:bg-gray-100 
+					md:flex text-left px-3 py-4">
+						<p className="w-1/3 text-lg font-semibold text-nav-dark">605 新台五</p>
+						<div className="w-1/3">
+							<p className="flex items-center text-nav-dark text-md truncate">
+								萬華
+								<span className="text-highlight px-1"><IoArrowForwardOutline /></span>
+								北投
+							</p>
 						</div>
-						<div className="flex items-center">
-							<IoHeart className="text-2xl text-gray-300 " />
-						</div>
-					</a>
-					<a role="button" href="https://www.google.com.tw/?hl=zh_TW" className="flex py-2 justify-between text-nav-dark tracking-wider">
-						<div>
-							<h1 className="text-xl font-semibold leading-8">302</h1>
-							<div className="flex items-center">
-								<p>萬華  </p>
-								<span className="text-highlight"><IoArrowForwardOutline /></span>
-								<p>  北投</p>
-							</div>
-						</div>
-						<div className="flex items-center">
-							<IoHeart className="text-2xl text-gray-300 " />
-						</div>
-					</a>
-				</div>
+						<button className="md:w-1/3 flex justify-center">
+							<IoHeart className="text-2xl text-gray-300 active:text-highlight" />
+						</button>
+					</li>
+				</ul>
 			</div>
-
-
-			<Footer />
 		</>
 	)
 }
