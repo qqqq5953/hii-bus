@@ -1,14 +1,14 @@
 const Button = (props) => {
 	const style = {
 		display: 'flex',
-		width: '60px',
-		height: '30px',
+		width: '70px',
+		height: '35px',
 		borderRadius: '100px',
 		color: props.fontColor,
-		border: '1px solid #5468FF',
+		border: props.borderStyle,
 		padding: '18px 8px',
 		outline: 0,
-		fontSize: '14px',
+		fontSize: props.fontSize,
 		alignItems: 'center',
 		justifyContent: 'center',
 		backgroundColor: props.backgroundColor,

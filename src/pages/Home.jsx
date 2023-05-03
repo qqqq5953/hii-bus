@@ -8,23 +8,11 @@ import TBackground from "../images/T-bg.svg";
 import DBackground from "../images/D-bg.svg";
 import Bus from "../images/M-bus-gif.png";
 import { IoLocationSharp, IoHeart } from "react-icons/io5";
-import getAuthorizationHeader from "../util/api";
-import { useEffect } from "react";
-import axios from "axios";
+
 
 
 
 const Home = () => {
-	// const API_URL = "https://tdx.transportdata.tw/api/basic/v2/Basic/City?%24format=JSON";
-
-	// useEffect(() => {
-	// 	(async () => {
-	// 		const res = await axios.get(API_URL, {
-	// 			headers: getAuthorizationHeader()
-	// 		});
-	// 		console.log(res);
-	// 	})();
-	// })
 
 	return (
 		<>

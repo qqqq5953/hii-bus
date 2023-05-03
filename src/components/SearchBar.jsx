@@ -33,11 +33,9 @@ const SearchBar = () => {
 	}, [fetchData]);
 
 
-
 	function handleSearchValue(e) {
 		setSearchValue(prevValue => prevValue + e.target.value);
 	}
-
 
 
 	return (<>
@@ -46,7 +44,7 @@ const SearchBar = () => {
 			<div>
 				<select name="dropdown" id="dropdown"
 					className="w-full text-gray-400 text-sm text-center rounded-l-lg focus:outline-none">
-					<option value="">請選擇縣市</option>
+					<option>請選擇縣市</option>
 					{city.map((item) => {
 						return (
 							<option key={item?.CityID} id={item?.CityID} value={item?.CityName}>
