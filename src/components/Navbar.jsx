@@ -4,9 +4,9 @@ import { IoLocationSharp, IoHeart } from "react-icons/io5";
 import LogoWhite from "../images/M-logo-white.svg";
 
 
-const Navbar = () => {
+const Navbar = (props) => {
 	return (<>
-		<nav>
+		<nav className={`${props.className}`}>
 			<div className="bg-nav-dark h-14 flex justify-between items-center md:h-16">
 				<img src={LogoWhite} alt="hi bus nav logo" className="mx-5 " />
 				<SearchBarDark className="hidden md:block" />

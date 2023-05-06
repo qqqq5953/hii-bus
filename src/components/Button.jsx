@@ -12,6 +12,7 @@ const Button = (props) => {
 		alignItems: 'center',
 		justifyContent: 'center',
 		backgroundColor: props.backgroundColor,
+		margin: props.margin,
 	}
 
 	return (
