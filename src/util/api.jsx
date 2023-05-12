@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 async function api() {
 	const parameter = {
 		grant_type: "client_credentials",
@@ -18,7 +17,7 @@ async function api() {
 		headers: { "content-type": "application/x-www-form-urlencoded" }
 	})
 
-	console.log('getAuthorizationHeader', res.data);
+	// console.log('getAuthorizationHeader', res.data);
 	return res.data.access_token
 }
 

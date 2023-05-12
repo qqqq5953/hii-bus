@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 
 const BusEstimate = () => {
 	return (<>
-		<div className="flex flex-col h-screen">
+		<div className="flex flex-col h-auto lg:h-screen">
 			<Navbar className="hidden md:block" />
 
 			<div className="h-full">

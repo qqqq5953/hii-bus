@@ -1,27 +1,61 @@
-import { IoArrowForwardOutline, IoHeart, IoChevronBack, IoBus } from "react-icons/io5";
+import { IoCode, IoHeart, IoChevronBack, IoBus, IoArrowBackCircleOutline } from "react-icons/io5";
 import Button from "./Button";
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
-import "leaflet/dist/leaflet.css";
+import BusMap from "../util/BusMap";
+import api from "../util/api";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 
 const BusEstimateArrival = () => {
+	const [stopData, setStopData] = useState([]);
+	const [etaData, setEtaData] = useState([]);
+	const STOP_URL = "https://tdx.transportdata.tw/api/basic/v2/Bus/StopOfRoute/City/Taipei/302?%24format=JSON";
+	const ESTIMATE_TIME_URL = "https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/Taipei/302?%24format=JSON";
+
+
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const accessToken = await api();
+			const etaRes = await axios.get(ESTIMATE_TIME_URL, {
+				headers: {
+					"authorization": "Bearer " + accessToken,
+				},
+			});
+			const stopRes = await axios.get(STOP_URL, {
+				headers: {
+					"authorization": "Bearer " + accessToken,
+				},
+			});
+
+
+			// 取出需要的欄位
+			const etas = etaRes.data.map((eta) => eta.EstimateTime);
+			const stops = stopRes.data.Stops.map((stop) => ({
+				sequence: stop.StopSequence,
+				name: stop.StopName.Zh_tw,
+			}));
+
+			// 資料整合
+			const newData = stops.map((stop, index) => ({
+				sequence: stop.sequence,
+				name: stop.name,
+				eta: etas[index],
+			}))
+
+			setStopData(stops);
+			setEtaData(etas);
+		};
+		fetchData();
+	}, []);
+
 
 	return (
 		<>
 			<div className="bg-white w-full h-auto lg:flex lg:h-full lg:p-5 lg:bg-gray-100">
 				{/* 地圖來囉 */}
 				<div className="hidden md:block sticky h-full w-full lg:w-1/2">
-					<MapContainer className="block object-cover lg:h-full"
-						center={[25.0368498, 121.5000289]} zoom={17} scrollWheelZoom={false}>
-						<TileLayer
-							attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-							url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-						/>
-						{/* <Marker position={[51.505, -0.09]}>
-						<Popup>
-							A pretty CSS3 popup. <br /> Easily customizable.
-						</Popup>
-					</Marker> */}
-					</MapContainer>
+					<BusMap />
 				</div>
 
 
@@ -37,12 +71,28 @@ const BusEstimateArrival = () => {
 					<main className="md:px-2 h-auto lg:px-4">
 						<div className="flex justify-between items-center">
 							<div className="px-2 py-2">
-								<p className="font-bold text-2xl text-nav-dark">302</p>
-								<p className="flex py-1 items-center text-nav-dark tracking-wider">
-									萬華
-									<span className="text-highlight px-1"><IoArrowForwardOutline /></span>
-									北投
-								</p>
+								<div className="flex">
+									<button>
+										<IoArrowBackCircleOutline className="hidden text-slate-300 md:block md:mr-3" size={26} />
+									</button>
+									<p className="font-bold text-2xl text-nav-dark">
+
+									</p>
+								</div>
+
+								<div className="flex py-1 items-center text-nav-dark tracking-wider">
+									{stopData.length > 0 && (
+										<div>
+											<p>{stopData[0].Stops[0].StopName.Zh_tw}</p>
+										</div>
+									)}
+									<span className="text-highlight px-1 text-lg"><IoCode /></span>
+									{stopData.length > 0 && (
+										<div>
+											<p>{stopData[0].Stops[stopData[0].Stops.length - 1].StopName.Zh_tw}</p>
+										</div>
+									)}
+								</div>
 							</div>
 							<div>
 								<button>
@@ -51,12 +101,25 @@ const BusEstimateArrival = () => {
 							</div>
 						</div>
 
-						<div className="grid grid-cols-2 divide-x divide-transparent h-10 border  border-gradient-start text-sm text-center rounded-lg overflow-hidden">
-							<button className="text-white bg-gradient-start">
-								往 台北車站
+
+						<div className="grid grid-cols-2 divide-x divide-transparent h-10 border  border-gradient-start rounded-lg overflow-hidden">
+							<button className="flex justify-center items-center text-white bg-gradient-start">
+								<p className="whitespace-pre">往 </p>
+								{stopData.length > 0 &&
+									stopData[1].Direction === 1 && (
+										<div>
+											<p>{stopData[0].Stops[0].StopName.Zh_tw}</p>
+										</div>
+									)}
 							</button>
-							<button className="text-gradient-start bg-white">
-								往 內湖科學園區
+							<button className="flex justify-center items-center text-gradient-start bg-white">
+								<p className="whitespace-pre">往 </p>
+								{stopData.length > 0 &&
+									stopData[0].Direction === 0 && (
+										<div>
+											<p>{stopData[0].Stops[stopData[0].Stops.length - 1].StopName.Zh_tw}</p>
+										</div>
+									)}
 							</button>
 						</div>
 
@@ -83,73 +146,29 @@ const BusEstimateArrival = () => {
 								</div>
 							</li>
 
-							<li className="flex items-center py-3 first:pt-0 last:pb-0 relative">
-								<div className="flex items-center">
-									<Button backgroundColor="#FFE5E5"
-										fontSize='15px'
-										fontColor='#FF6464'>
-										2分
-									</Button >
-									<p className="text-nav-dark mx-3">老松國小</p>
-								</div>
-								<div className="absolute -right-3 w-1 h-16 py-6 bg-slate-200 
-								md:-right-5 md:h-16 md:py-6 lg:-right-2">
-									<div className="relative h-3 w-3 right-1 
-					after:content[''] rounded-full border-2 border-slate-300"/>
-								</div>
-							</li>
 
-							<li className="flex items-center py-3 first:pt-0 last:pb-0 relative">
-								<div className="flex items-center">
-									<Button backgroundColor="#FFE5E5"
-										fontSize='15px'
-										fontColor='#FF6464'>
-										2分
-									</Button >
-									<p className="text-nav-dark mx-3">老松國小</p>
-								</div>
-								<div className="absolute -right-3 w-1 h-16 py-6 bg-slate-200 
+							{stopData.map((stop, index) => {
+								return (
+									<li className="flex items-center py-3 first:pt-0 last:pb-0 relative" key={stop.sequence}>
+										<div className="flex items-center">
+											<div className="flex items-center">
+												<Button backgroundColor="#FF6464"
+													fontSize='12px'
+													fontColor='#FFF'>
+													預估到站{etaData[index]}秒
+												</Button >
+												<p className="text-nav-dark mx-3">{stop.name}</p>
+											</div>
+										</div>
+										<div className="absolute -right-3 w-0.5 h-16 py-6 bg-slate-200 
 								md:-right-5 md:h-16 md:py-6 lg:-right-2">
-									<span className="relative flex h-3 w-3 right-1">
-										<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-200 opacity-75"></span>
-										<span className="relative inline-flex rounded-full h-3 w-3 bg-slate-300"></span>
-									</span>
-								</div>
-							</li>
+											<div className="relative h-2 w-2 right-[3px] 
+					after:content[''] rounded-full border-[2px] border-slate-200 bg-white"/>
+										</div>
+									</li>
+								)
+							})}
 
-							<li className="flex items-center py-3 first:pt-0 last:pb-0 relative">
-								<div className="flex items-center">
-									<Button backgroundColor="#FFE5E5"
-										fontSize='15px'
-										fontColor='#FF6464'>
-										2分
-									</Button >
-									<p className="text-nav-dark mx-3">老松國小</p>
-								</div>
-								<div className="absolute -right-3 w-1 h-16 py-6 bg-slate-200 
-								md:-right-5 md:h-16 md:py-6 lg:-right-2">
-									<span className="relative flex h-3 w-3 right-1">
-										<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-200 opacity-75"></span>
-										<span className="relative inline-flex rounded-full h-3 w-3 bg-slate-300"></span>
-									</span>
-								</div>
-							</li>
-
-							<li className="flex items-center py-3 first:pt-0 last:pb-0 relative">
-								<div className="flex items-center">
-									<Button backgroundColor="#FFE5E5"
-										fontSize='15px'
-										fontColor='#FF6464'>
-										2分
-									</Button >
-									<p className="text-nav-dark mx-3">老松國小</p>
-								</div>
-								<div className="absolute -right-3 w-1 h-16 py-6 bg-slate-200 
-								md:-right-5 md:h-16 md:py-6 lg:-right-2">
-									<div className="relative h-3 w-3 right-1 
-					after:content[''] rounded-full border-2 border-slate-300"/>
-								</div>
-							</li>
 
 						</ul>
 					</main>

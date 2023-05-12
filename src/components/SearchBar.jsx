@@ -1,37 +1,17 @@
-import api from "../util/api";
 import { IoSearch } from "react-icons/io5";
-import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import { useState } from "react";
+import { cityList } from "../data/city";
 
 
 const SearchBar = () => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [city, setCity] = useState([]);
 	const [searchValue, setSearchValue] = useState('');
 
 	const pressUnit = ['紅', '綠', '橘', '藍', '黃', '棕', '幹線', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-	const CITY_URL = "https://tdx.transportdata.tw/api/basic/v2/Basic/City?%24format=JSON";
 
-
-	const fetchData = useCallback(async () => {
-		try {
-			const accessToken = await api();
-			const cityRes = await axios.get(CITY_URL, {
-				headers: {
-					"authorization": "Bearer " + accessToken,
-				},
-			});
-			setCity(cityRes.data);
-			console.log("city", city);
-		} catch (error) {
-			console.log("error", error);
-		}
-	}, []);
-
-	useEffect(() => {
-		fetchData();
-	}, [fetchData]);
-
+	const cities = cityList.map((city, index) =>
+		<option key={index}>{city[0]}</option>
+	)
 
 	function handleSearchValue(e) {
 		setSearchValue(prevValue => prevValue + e.target.value);
@@ -45,13 +25,7 @@ const SearchBar = () => {
 				<select name="dropdown" id="dropdown"
 					className="w-full text-gray-400 text-sm text-center rounded-l-lg focus:outline-none">
 					<option>請選擇縣市</option>
-					{city.map((item) => {
-						return (
-							<option key={item?.CityID} id={item?.CityID} value={item?.CityName}>
-								{item?.CityName}
-							</option>
-						)
-					})}
+					{cities}
 				</select>
 			</div>
 			<div className="relative flex col-span-2 bg-white rounded-r-lg">
