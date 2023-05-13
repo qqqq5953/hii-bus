@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-async function api() {
+async function getAuthorizationHeader() {
 	const parameter = {
 		grant_type: "client_credentials",
 		client_id: "qqqq5953-b6093e34-65c5-477a",
@@ -21,4 +21,4 @@ async function api() {
 	return res.data.access_token
 }
 
-export default api;
+export default getAuthorizationHeader;
