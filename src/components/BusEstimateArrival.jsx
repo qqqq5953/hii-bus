@@ -1,6 +1,6 @@
 import { IoCode, IoHeart, IoChevronBack, IoBus, IoArrowBackCircleOutline } from "react-icons/io5";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Button from "./Button";
 import BusMap from "../util/BusMap";
 import getAuthorizationHeader from "../util/getAuthorizationHeader";
@@ -37,7 +37,8 @@ function Stop({ stopInfo }) {
 
 const BusEstimateArrival = () => {
 	const [stopData, setStopData] = useState([]);
-	const [etaData, setEtaData] = useState([]);
+	const [routeData, setRouteData] = useState([]);
+	const navigate = useNavigate();
 	const STOP_URL = "https://tdx.transportdata.tw/api/basic/v2/Bus/StopOfRoute/City/Taipei/302?%24format=JSON";
 	const ESTIMATE_TIME_URL = "https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/Taipei/302?%24format=JSON";
 
@@ -45,21 +46,26 @@ const BusEstimateArrival = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			const accessToken = await getAuthorizationHeader();
-			const etaRes = await axios.get(ESTIMATE_TIME_URL, {
+			const eta = axios.get(ESTIMATE_TIME_URL, {
 				headers: {
 					"authorization": "Bearer " + accessToken,
 				},
 			});
-			const stopRes = await axios.get(STOP_URL, {
+			const stop = axios.get(STOP_URL, {
 				headers: {
 					"authorization": "Bearer " + accessToken,
 				},
 			});
-			// console.log('etaRes.data', etaRes.data, );
-			// console.log('stopRes.data', stopRes.data);
+			const result = await Promise.all([eta, stop]);
+			// console.log('result', result);
+			const etaRes = result[0].data;
+			const stopRes = result[1].data;
+			// console.log('etaRes', etaRes);
+			// console.log('stopRes', stopRes);
+
 
 			// #1 取出需要的欄位
-			const etas = etaRes.data.map((eta) => {
+			const etas = etaRes.map((eta) => {
 				return {
 					EstimateTime: eta.EstimateTime,
 					StopUID: eta.StopUID
@@ -67,7 +73,7 @@ const BusEstimateArrival = () => {
 			});
 			// console.log('etas', etas);
 
-			const stops = stopRes.data.map((item) => {
+			const stops = stopRes.map((item) => {
 				return {
 					direction: item.Direction,
 					subRouteName: item.SubRouteName.Zh_tw,
@@ -78,14 +84,23 @@ const BusEstimateArrival = () => {
 			// console.log('stops', stops);
 
 
-			// #2 forEach 分別取出物件中的 key 及 value 並組裝成 {StopUID:EstimateTime}的資料型態
-			const estimateTimeObj = {}
-			etas.forEach(obj => {
-				const EstimateTime = obj.EstimateTime
-				const StopUID = obj.StopUID
-				estimateTimeObj[StopUID] = EstimateTime
-			})
+			// #2 forEach 分別取出物件中的 key 及 value 並組裝成 {StopUID:EstimateTime} 的資料型態
+			// const estimateTimeObj = {}
+			// etas.forEach(obj => {
+			// 	const EstimateTime = obj.EstimateTime
+			// 	const StopUID = obj.StopUID
+			// 	estimateTimeObj[StopUID] = EstimateTime
+			// })
 			// console.log('estimateTimeObj', estimateTimeObj);
+
+			const estimateTimeObj = etas.reduce((obj, item) => {
+				const EstimateTime = item.EstimateTime;
+				const StopUID = item.StopUID;
+				obj[StopUID] = EstimateTime;
+				return obj;
+			}, {});
+			console.log('estimateTimeObj', estimateTimeObj);
+
 
 			const routeObj = {}
 			stops.forEach(item => {
@@ -93,7 +108,7 @@ const BusEstimateArrival = () => {
 				// const key = `${subRouteName}_${direction}`
 				routeObj[key] = stops
 			})
-			// console.log('routeObj', routeObj);
+			console.log('routeObj', routeObj);
 
 			// #3 合併資料
 			// 原本資料狀態為 {302路_1:[]},且無 EstimateTime 資料
@@ -110,7 +125,7 @@ const BusEstimateArrival = () => {
 				})
 				finalRoute[routeName] = newStops;
 			}
-			console.log('finalRoute', finalRoute); // 為何不能直接用 routeName？ 他只在for迴圈中作用
+			// console.log('finalRoute', finalRoute); // 為何不能直接用 routeName？ 他只在for迴圈中作用
 
 			// 另一種方法！
 			// Object.keys(routeObj) // [key1,key2]
@@ -132,11 +147,14 @@ const BusEstimateArrival = () => {
 			// })
 			// console.log('finalRoute', finalRoute);
 
-			console.log(finalRoute['302路_1']);
+			// console.log('finalRoute 302', finalRoute['302路_1']);
+			setStopData(finalRoute['302路_1']); // 帶入搜尋到的公車路線
+			setRouteData(stops);
 		};
 		fetchData();
 	}, []);
-
+	// console.log('stopData', stopData);
+	console.log('RouteData', routeData);
 
 	return (
 		<>
@@ -152,8 +170,14 @@ const BusEstimateArrival = () => {
 				md:px-8 
 				lg:w-1/2 lg:bg-white mx-3 lg:p-4 rounded-lg overflow-y-auto">
 					<div className="flex box-border justify-between md:hidden">
-						<button><IoChevronBack className="text-slate-300" size={22} /></button>
-						<button className="w-24 h-10 border border-slate-300 rounded-full text-sm text-slate-400 tracking-wider">顯示地圖</button>
+						<button type="button" onClick={() => {
+							navigate(-1);
+						}}>
+							<IoChevronBack className="text-slate-300" size={22} />
+						</button>
+						<button type="button" className="w-24 h-10 border border-slate-300 rounded-full text-sm text-slate-400 tracking-wider">
+							顯示地圖
+						</button>
 					</div>
 
 					<main className="md:px-2 h-auto lg:px-4">
@@ -164,18 +188,17 @@ const BusEstimateArrival = () => {
 										<IoArrowBackCircleOutline className="hidden text-slate-300 md:block md:mr-3" size={26} />
 									</button>
 									<p className="font-bold text-2xl text-nav-dark">
-
+										{routeData.length > 0 &&
+											(<div>{routeData[0].subRouteName}</div>)}
 									</p>
 								</div>
 
 								<div className="flex py-1 items-center text-nav-dark tracking-wider">
-
+									{stopData.length > 0 &&
+										(<div>{stopData[0].StopName.Zh_tw}</div>)}
 									<span className="text-highlight px-1 text-lg"><IoCode /></span>
-									{stopData.length > 0 && (
-										<div>
-											<p>{stopData[0].Stops[stopData[0].Stops.length - 1].StopName.Zh_tw}</p>
-										</div>
-									)}
+									{stopData.length > 0 &&
+										(<div>{stopData[(stopData.length) - 1].StopName.Zh_tw}</div>)}
 								</div>
 							</div>
 							<div>
@@ -190,20 +213,12 @@ const BusEstimateArrival = () => {
 							<button className="flex justify-center items-center text-white bg-gradient-start">
 								<p className="whitespace-pre">往 </p>
 								{stopData.length > 0 &&
-									stopData[1].Direction === 1 && (
-										<div>
-											<p>{stopData[0].Stops[0].StopName.Zh_tw}</p>
-										</div>
-									)}
+									(<div>{stopData[0].StopName.Zh_tw}</div>)}
 							</button>
 							<button className="flex justify-center items-center text-gradient-start bg-white">
 								<p className="whitespace-pre">往 </p>
 								{stopData.length > 0 &&
-									stopData[0].Direction === 0 && (
-										<div>
-											<p>{stopData[0].Stops[stopData[0].Stops.length - 1].StopName.Zh_tw}</p>
-										</div>
-									)}
+									(<div>{stopData[(stopData.length) - 1].StopName.Zh_tw}</div>)}
 							</button>
 						</div>
 
@@ -231,17 +246,19 @@ const BusEstimateArrival = () => {
 							</li>
 
 
-							{stopData.map((stop, index) => {
+							{stopData.map((stop) => {
 								return (
-									<li className="flex items-center py-3 first:pt-0 last:pb-0 relative" key={stop.sequence}>
+									<li className="flex items-center py-3 first:pt-0 last:pb-0 relative" key={stop.StopUID}>
 										<div className="flex items-center">
 											<div className="flex items-center">
 												<Button backgroundColor="#FF6464"
 													fontSize='12px'
 													fontColor='#FFF'>
-													預估到站{etaData[index]}秒
+													{Math.floor(stop.estimateTime / 60)}分
 												</Button >
-												<p className="text-nav-dark mx-3">{stop.name}</p>
+												<p className="text-nav-dark mx-3">
+													{stop.StopName.Zh_tw}
+												</p>
 											</div>
 										</div>
 										<div className="absolute -right-3 w-0.5 h-16 py-6 bg-slate-200 
@@ -257,7 +274,6 @@ const BusEstimateArrival = () => {
 						</ul>
 					</main>
 				</div>
-
 
 			</div>
 		</>

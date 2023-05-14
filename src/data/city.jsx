@@ -23,4 +23,5 @@ const cityName =
 連江縣:LienchiangCounty`;
 
 let cities = cityName.split(/\r?\n/);
-export const cityList = cities.map(i => i.split(':'));
+export const cityList = cities.map(i => i.split(':'))
+console.log('cityList', cityList);
