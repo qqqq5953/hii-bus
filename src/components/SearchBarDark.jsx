@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { IoSearch } from "react-icons/io5";
-import { cityList } from "../data/city";
+// import cityList from "../data/city";
 
 
 const SearchBarDark = (props) => {
