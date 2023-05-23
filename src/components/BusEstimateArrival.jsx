@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Button from "./Button";
 import BusMap from "../util/BusMap";
 import getAuthorizationHeader from "../util/getAuthorizationHeader";
+import cityList from "../data/cityList";
 import axios from "axios";
 
 function Stop({ stopInfo }) {
@@ -34,24 +35,32 @@ function Stop({ stopInfo }) {
 	}
 }
 
+const CityObj = cityList.reduce((acc, item) => {
+	const chName = item.city_zh;
+	const enName = item.city_en;
+	acc[chName] = enName;
+	return acc;
+}, {});
 
 const BusEstimateArrival = () => {
 	const [stopData, setStopData] = useState([]);
 	const [routeData, setRouteData] = useState([]);
+	const [city, setCity] = useState('臺北市'); // choose city
+	const [routeNumber, setRouteNumber] = useState(''); // 搜尋公車路線
 	const navigate = useNavigate();
-	const STOP_URL = "https://tdx.transportdata.tw/api/basic/v2/Bus/StopOfRoute/City/Taipei/302?%24format=JSON";
-	const ESTIMATE_TIME_URL = "https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/Taipei/302?%24format=JSON";
+	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
+
 
 
 	useEffect(() => {
 		const fetchData = async () => {
 			const accessToken = await getAuthorizationHeader();
-			const eta = axios.get(ESTIMATE_TIME_URL, {
+			const eta = axios.get(`${api}EstimatedTimeOfArrival/City/Taipei/302?%24format=JSON`, {
 				headers: {
 					"authorization": "Bearer " + accessToken,
 				},
 			});
-			const stop = axios.get(STOP_URL, {
+			const stop = axios.get(`${api}StopOfRoute/City/${CityObj[city]}/${routeNumber}?%24format=JSON`, {
 				headers: {
 					"authorization": "Bearer " + accessToken,
 				},
@@ -85,21 +94,13 @@ const BusEstimateArrival = () => {
 
 
 			// #2 forEach 分別取出物件中的 key 及 value 並組裝成 {StopUID:EstimateTime} 的資料型態
-			// const estimateTimeObj = {}
-			// etas.forEach(obj => {
-			// 	const EstimateTime = obj.EstimateTime
-			// 	const StopUID = obj.StopUID
-			// 	estimateTimeObj[StopUID] = EstimateTime
-			// })
-			// console.log('estimateTimeObj', estimateTimeObj);
-
 			const estimateTimeObj = etas.reduce((obj, item) => {
 				const EstimateTime = item.EstimateTime;
 				const StopUID = item.StopUID;
 				obj[StopUID] = EstimateTime;
 				return obj;
 			}, {});
-			console.log('estimateTimeObj', estimateTimeObj);
+			// console.log('estimateTimeObj', estimateTimeObj);
 
 
 			const routeObj = {}
@@ -111,50 +112,28 @@ const BusEstimateArrival = () => {
 			console.log('routeObj', routeObj);
 
 			// #3 合併資料
-			// 原本資料狀態為 {302路_1:[]},且無 EstimateTime 資料
 			// for...in 設定名稱為 routeName 的 key 在 routeObj
 			const finalRoute = {}
 			for (const routeName in routeObj) {
 				const stops = routeObj[routeName]
 				const newStops = stops.map(stop => {
-					const estimateTime = estimateTimeObj[stop.StopUID] // 用 StopUID 抓 estimateTime 的值
+					const EstimateTime = estimateTimeObj[stop.StopUID] // 用 StopUID 抓 EstimateTime 的值
 					return {
-						estimateTime,
+						EstimateTime,
 						...stop
 					}
 				})
 				finalRoute[routeName] = newStops;
 			}
-			// console.log('finalRoute', finalRoute); // 為何不能直接用 routeName？ 他只在for迴圈中作用
-
-			// 另一種方法！
-			// Object.keys(routeObj) // [key1,key2]
-			// Object.values(routeObj) // [value1,value2]
-			// Object.entries(routeObj) // [[key1,value1],[key2,value2]]
-
-			// const finalRoute = {}
-			// Object.entries(routeObj).forEach(item => {
-			// 	const routeName = item[0]
-			// 	const stops = item[1]
-			// 	const newStops = stops.map(stop => {
-			// 		const estimateTime = estimateTimeObj[stop.StopUID]
-			// 		return {
-			// 			estimateTime,
-			// 			...stop
-			// 		}
-			// 	})
-			// 	finalRoute[routeName] = newStops
-			// })
-			// console.log('finalRoute', finalRoute);
-
-			// console.log('finalRoute 302', finalRoute['302路_1']);
+			console.log('finalRoute 302', finalRoute['302路_1']);
 			setStopData(finalRoute['302路_1']); // 帶入搜尋到的公車路線
 			setRouteData(stops);
 		};
 		fetchData();
 	}, []);
 	// console.log('stopData', stopData);
-	console.log('RouteData', routeData);
+	// console.log('RouteData', routeData);
+	// console.log('useParams', useParams());
 
 	return (
 		<>
@@ -187,10 +166,10 @@ const BusEstimateArrival = () => {
 									<button>
 										<IoArrowBackCircleOutline className="hidden text-slate-300 md:block md:mr-3" size={26} />
 									</button>
-									<p className="font-bold text-2xl text-nav-dark">
+									<div className="font-bold text-2xl text-nav-dark">
 										{routeData.length > 0 &&
 											(<div>{routeData[0].subRouteName}</div>)}
-									</p>
+									</div>
 								</div>
 
 								<div className="flex py-1 items-center text-nav-dark tracking-wider">
@@ -209,7 +188,7 @@ const BusEstimateArrival = () => {
 						</div>
 
 
-						<div className="grid grid-cols-2 divide-x divide-transparent h-10 border  border-gradient-start rounded-lg overflow-hidden">
+						<div className="grid grid-cols-2 divide-x divide-transparent h-10 border border-gradient-start rounded-lg overflow-hidden">
 							<button className="flex justify-center items-center text-white bg-gradient-start">
 								<p className="whitespace-pre">往 </p>
 								{stopData.length > 0 &&
