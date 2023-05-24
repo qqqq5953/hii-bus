@@ -1,10 +1,11 @@
 import { IoCode, IoHeart, IoChevronBack, IoBus, IoArrowBackCircleOutline } from "react-icons/io5";
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 import BusMap from "../util/BusMap";
 import getAuthorizationHeader from "../util/getAuthorizationHeader";
 import cityList from "../data/cityList";
+import DataContext from "../data/DataContext";
 import axios from "axios";
 
 function Stop({ stopInfo }) {
@@ -35,27 +36,34 @@ function Stop({ stopInfo }) {
 	}
 }
 
-const CityObj = cityList.reduce((acc, item) => {
-	const chName = item.city_zh;
-	const enName = item.city_en;
-	acc[chName] = enName;
-	return acc;
-}, {});
 
 const BusEstimateArrival = () => {
+	const { routeNumber, city, response, setResponse } = useContext(DataContext);
+
 	const [stopData, setStopData] = useState([]);
-	const [routeData, setRouteData] = useState([]);
-	const [city, setCity] = useState('臺北市'); // choose city
-	const [routeNumber, setRouteNumber] = useState(''); // 搜尋公車路線
+	// const [city, setCity] = useState('臺北市'); // choose city
+	// const [routeNumber, setRouteNumber] = useState(''); // 搜尋公車路線
 	const navigate = useNavigate();
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
+
+	// 把 city 陣列轉成中英對照的物件型態 ex. {"台北市" : "Taipei"}
+	const CityObj = cityList.reduce((acc, item) => {
+		const chName = item.city_zh;
+		const enName = item.city_en;
+		acc[chName] = enName;
+		return acc;
+	}, {});
+	// console.log('CityObj', CityObj);
+	// console.log('routeNumber', routeNumber);
 
 
 
 	useEffect(() => {
-		const fetchData = async () => {
+		const getAllRoutes = async () => {
+			if (!city) return;
+
 			const accessToken = await getAuthorizationHeader();
-			const eta = axios.get(`${api}EstimatedTimeOfArrival/City/Taipei/302?%24format=JSON`, {
+			const eta = axios.get(`${api}EstimatedTimeOfArrival/City/${CityObj[city]}/${routeNumber}?%24format=JSON`, {
 				headers: {
 					"authorization": "Bearer " + accessToken,
 				},
@@ -66,7 +74,7 @@ const BusEstimateArrival = () => {
 				},
 			});
 			const result = await Promise.all([eta, stop]);
-			// console.log('result', result);
+			console.log('result', result);
 			const etaRes = result[0].data;
 			const stopRes = result[1].data;
 			// console.log('etaRes', etaRes);
@@ -85,12 +93,13 @@ const BusEstimateArrival = () => {
 			const stops = stopRes.map((item) => {
 				return {
 					direction: item.Direction,
-					subRouteName: item.SubRouteName.Zh_tw,
-					key: `${item.SubRouteName.Zh_tw}_${item.Direction}`,
+					RouteName: item.RouteName.Zh_tw,
+					key: `${item.RouteName.Zh_tw}_${item.Direction}`,
 					stops: item.Stops
 				}
 			});
 			// console.log('stops', stops);
+
 
 
 			// #2 forEach 分別取出物件中的 key 及 value 並組裝成 {StopUID:EstimateTime} 的資料型態
@@ -111,29 +120,27 @@ const BusEstimateArrival = () => {
 			})
 			console.log('routeObj', routeObj);
 
-			// #3 合併資料
+			// #3 組合資料（上面的 routeObj 還缺 EstimateTime 資料）
 			// for...in 設定名稱為 routeName 的 key 在 routeObj
 			const finalRoute = {}
 			for (const routeName in routeObj) {
 				const stops = routeObj[routeName]
 				const newStops = stops.map(stop => {
-					const EstimateTime = estimateTimeObj[stop.StopUID] // 用 StopUID 抓 EstimateTime 的值
+					const EstimateTime = estimateTimeObj[stop.StopUID] // 用 StopUID 抓 estimateTimeObj相對應的站牌再賦予EstimateTime 的值，return EstimateTime 跟 stop 中的其他屬性 
 					return {
 						EstimateTime,
 						...stop
 					}
 				})
 				finalRoute[routeName] = newStops;
+				setStopData(newStops); // 帶入搜尋到的公車路線
 			}
-			console.log('finalRoute 302', finalRoute['302路_1']);
-			setStopData(finalRoute['302路_1']); // 帶入搜尋到的公車路線
-			setRouteData(stops);
+			// console.log('finalRoute', finalRoute);
 		};
-		fetchData();
-	}, []);
-	// console.log('stopData', stopData);
-	// console.log('RouteData', routeData);
+		getAllRoutes();
+	}, [city]);
 	// console.log('useParams', useParams());
+	console.log('stopData', stopData);
 
 	return (
 		<>
@@ -157,6 +164,7 @@ const BusEstimateArrival = () => {
 						<button type="button" className="w-24 h-10 border border-slate-300 rounded-full text-sm text-slate-400 tracking-wider">
 							顯示地圖
 						</button>
+						<p>{city}</p>
 					</div>
 
 					<main className="md:px-2 h-auto lg:px-4">
@@ -167,8 +175,7 @@ const BusEstimateArrival = () => {
 										<IoArrowBackCircleOutline className="hidden text-slate-300 md:block md:mr-3" size={26} />
 									</button>
 									<div className="font-bold text-2xl text-nav-dark">
-										{routeData.length > 0 &&
-											(<div>{routeData[0].subRouteName}</div>)}
+										{routeNumber}
 									</div>
 								</div>
 

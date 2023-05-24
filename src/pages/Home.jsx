@@ -10,6 +10,7 @@ import Bus from "../images/M-bus-gif.png";
 import { IoLocationSharp, IoHeart } from "react-icons/io5";
 
 
+
 const Home = () => {
 
 	return (
@@ -39,7 +40,9 @@ const Home = () => {
 						<h1 className="font-chinese">今天想搭乘哪輛公車呢？</h1>
 					</div>
 
+
 					<SearchBar />
+
 
 					<div>
 						<img src={MBackground} className="absolute bottom-24 w-full object-cover block md:hidden" alt="background" />
