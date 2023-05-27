@@ -1,7 +1,7 @@
 const Button = (props) => {
 	const style = {
 		display: 'flex',
-		width: '70px',
+		width: '72px',
 		height: '35px',
 		borderRadius: '100px',
 		color: props.fontColor,

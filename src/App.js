@@ -14,7 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />}></Route>
           <Route path="/search" element={<Search />}></Route>
-          <Route path="/:city/:RouteUID" element={<BusStatusPage />}></Route>
+          <Route path="/:city/:RouteUID" element={<BusStatusPage />} ></Route>
           <Route path="*" element={<NotFound />}></Route>
         </Routes>
       </DataProvider>

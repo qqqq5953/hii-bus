@@ -1,8 +1,38 @@
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { useEffect, useState, useContext } from 'react';
+import axios from 'axios';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
+import getAuthorizationHeader from './getAuthorizationHeader';
+import DataContext from '../data/DataContext';
+
 
 const BusMap = () => {
+	const { routeNumber, city, api, CityObj } = useContext(DataContext);
+	const [stops, setStops] = useState([]);
+
+	useEffect(() => {
+		const accessToken = getAuthorizationHeader();
+		axios.get(`${api}StopOfRoute/City/${CityObj[city]}/${routeNumber}?%24format=JSON`, {
+			headers: {
+				"authorization": "Bearer " + accessToken,
+			},
+		}).then(response => {
+			const data = response.data;
+			// 解析 API 回傳的資料，取得各個站牌的經緯度
+			const stopData = data.map(stop => ({
+				id: stop.RouteUID,
+				name: stop.RouteName.Zh_tw,
+				latitude: stop.StopPosition.PositionLat,
+				longitude: stop.StopPosition.PositionLo,
+			}));
+			setStops(stopData);
+			console.log('stops', stops);
+		}).catch(error => {
+			console.error('Error fetching station data:', error);
+		});
+	}, []);
+
 	const markers = [
 		{
 			geocode: [25.03577587529372, 121.52012180515803],
@@ -34,8 +64,8 @@ const BusMap = () => {
 			<MapContainer className="block object-cover md:h-1/2 lg:h-full"
 				center={[25.03577587529372, 121.52012180515803]} zoom={17} >
 				<TileLayer
-					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+					attribution='Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+					url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
 				/>
 
 				{markers.map((marker) => (

@@ -8,43 +8,25 @@ import cityList from "../data/cityList";
 import DataContext from "../data/DataContext";
 import axios from "axios";
 
-function Stop({ stopInfo }) {
-	const { stopName, plateNumb, estimatedSeconds, stopStatus } = stopInfo;
-
-	function getMinute() {
-		if (stopStatus === 4)
-			return <Button backgroundColor="#FF6464"
-				fontSize='12px'
-				fontColor='#FFF'>
-				今日未營運
-			</Button >;
-		if (stopStatus === 3)
-			return <span>末班車已過</span>;
-		if (stopStatus === 2)
-			return <span>交管不停靠</span>;
-		if (stopStatus === 1 || stopStatus === undefined)
-			return <span>未發車</span>;
-		if (estimatedSeconds < 120)
-			return <span>即將進站</span>;
-		return (
-			<Button backgroundColor="#FF6464"
-				fontSize='12px'
-				fontColor='#FFF'>
-				{Math.floor(estimatedSeconds / 60)}分
-			</Button >
-		)
-	}
-}
-
 
 const BusEstimateArrival = () => {
-	const { routeNumber, city, response, setResponse } = useContext(DataContext);
+	const { routeNumber, city, api, routeName } = useContext(DataContext);
+
 
 	const [stopData, setStopData] = useState([]);
-	// const [city, setCity] = useState('臺北市'); // choose city
-	// const [routeNumber, setRouteNumber] = useState(''); // 搜尋公車路線
+	const [direction, setDirection] = useState("");
+	const [finalRoute, setFinalRoute] = useState({});
 	const navigate = useNavigate();
-	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
+
+
+	// useEffect(() => {
+	// 	console.log('outer', routeName);
+	// 	const defaultDirection = `${routeName}_0`
+	// 	console.log('defaultDirection', defaultDirection);
+	// 	setDirection(defaultDirection)
+	// 	console.log('direction', direction);
+	// }, [])
+
 
 	// 把 city 陣列轉成中英對照的物件型態 ex. {"台北市" : "Taipei"}
 	const CityObj = cityList.reduce((acc, item) => {
@@ -55,8 +37,6 @@ const BusEstimateArrival = () => {
 	}, {});
 	// console.log('CityObj', CityObj);
 	// console.log('routeNumber', routeNumber);
-
-
 
 	useEffect(() => {
 		const getAllRoutes = async () => {
@@ -74,7 +54,7 @@ const BusEstimateArrival = () => {
 				},
 			});
 			const result = await Promise.all([eta, stop]);
-			console.log('result', result);
+			// console.log('result', result);
 			const etaRes = result[0].data;
 			const stopRes = result[1].data;
 			// console.log('etaRes', etaRes);
@@ -84,22 +64,23 @@ const BusEstimateArrival = () => {
 			// #1 取出需要的欄位
 			const etas = etaRes.map((eta) => {
 				return {
+					Direction: eta.Direction,
 					EstimateTime: eta.EstimateTime,
-					StopUID: eta.StopUID
+					StopUID: eta.StopUID,
+					StopStatus: eta.StopStatus,
 				}
 			});
 			// console.log('etas', etas);
 
 			const stops = stopRes.map((item) => {
 				return {
-					direction: item.Direction,
+					Direction: item.Direction,
 					RouteName: item.RouteName.Zh_tw,
 					key: `${item.RouteName.Zh_tw}_${item.Direction}`,
 					stops: item.Stops
 				}
 			});
 			// console.log('stops', stops);
-
 
 
 			// #2 forEach 分別取出物件中的 key 及 value 並組裝成 {StopUID:EstimateTime} 的資料型態
@@ -109,16 +90,41 @@ const BusEstimateArrival = () => {
 				obj[StopUID] = EstimateTime;
 				return obj;
 			}, {});
-			// console.log('estimateTimeObj', estimateTimeObj);
+
+			// 取出站牌狀態資料
+			const stopStatusObj = etas.reduce((stopObj, item) => {
+				const StopStatus = item.StopStatus;
+				const StopUID = item.StopUID;
+				stopObj[StopUID] = StopStatus;
+				return stopObj;
+			}, {});
+			// console.log('stopStatusObj', stopStatusObj);
 
 
+			// 取出方向
+			const etaDirectionObj = etas.reduce((directionObj, item) => {
+				const Direction = item.Direction;
+				const StopUID = item.StopUID;
+				directionObj[StopUID] = Direction;
+				return directionObj;
+			}, {});
+
+			const stopDirectionObj = stops.reduce((directionObj, item) => {
+				const Direction = item.Direction;
+				const StopUID = item.StopUID;
+				directionObj[StopUID] = Direction;
+				return directionObj;
+			}, {});
+
+			// 取出路線
 			const routeObj = {}
 			stops.forEach(item => {
 				const { key, stops } = item  // 解構取值
 				// const key = `${subRouteName}_${direction}`
 				routeObj[key] = stops
 			})
-			console.log('routeObj', routeObj);
+			// console.log('routeObj', routeObj);
+
 
 			// #3 組合資料（上面的 routeObj 還缺 EstimateTime 資料）
 			// for...in 設定名稱為 routeName 的 key 在 routeObj
@@ -126,8 +132,14 @@ const BusEstimateArrival = () => {
 			for (const routeName in routeObj) {
 				const stops = routeObj[routeName]
 				const newStops = stops.map(stop => {
-					const EstimateTime = estimateTimeObj[stop.StopUID] // 用 StopUID 抓 estimateTimeObj相對應的站牌再賦予EstimateTime 的值，return EstimateTime 跟 stop 中的其他屬性 
+					const StopStatus = stopStatusObj[stop.StopUID];
+					const EtaDirection = etaDirectionObj[stop.StopUID];
+					const StopDirection = stopDirectionObj[stop.StopUID];
+					const EstimateTime = estimateTimeObj[stop.StopUID]; // 用 StopUID 抓 estimateTimeObj相對應的站牌再賦予EstimateTime 的值，return EstimateTime 跟 stop 中的其他屬性 
 					return {
+						StopStatus,
+						EtaDirection,
+						StopDirection,
 						EstimateTime,
 						...stop
 					}
@@ -135,16 +147,35 @@ const BusEstimateArrival = () => {
 				finalRoute[routeName] = newStops;
 				setStopData(newStops); // 帶入搜尋到的公車路線
 			}
+
+			setFinalRoute(finalRoute)
+			// const init = finalRoute[direction]
 			// console.log('finalRoute', finalRoute);
+			// console.log('direction', direction);
+			// console.log('init', init);
+			// console.log('init', init);
+			// setStopData(init); // 帶入搜尋到的公車路線
+
 		};
 		getAllRoutes();
+		
 	}, [city]);
+
+	// useEffect(() => {
+	// 	if (!direction) return
+	// 	console.log('test2 direction', direction);
+	// 	// console.log('finalRoute', finalRoute);
+	// 	const newStops = finalRoute[direction];
+	// 	console.log('newStops', newStops);
+
+	// 	// setStopData(newStops); // 帶入搜尋到的公車路線
+	// }, [direction])
 	// console.log('useParams', useParams());
 	console.log('stopData', stopData);
 
 	return (
 		<>
-			<div className="bg-white w-full h-auto lg:flex lg:h-full lg:p-5 lg:bg-gray-100">
+			<div className="bg-white w-full h-auto lg:flex lg:h-full lg:p-5 lg:bg-gray-100 border border-red-300">
 				{/* 地圖來囉 */}
 				<div className="hidden md:block sticky h-full w-full lg:w-1/2">
 					<BusMap />
@@ -164,7 +195,6 @@ const BusEstimateArrival = () => {
 						<button type="button" className="w-24 h-10 border border-slate-300 rounded-full text-sm text-slate-400 tracking-wider">
 							顯示地圖
 						</button>
-						<p>{city}</p>
 					</div>
 
 					<main className="md:px-2 h-auto lg:px-4">
@@ -175,7 +205,7 @@ const BusEstimateArrival = () => {
 										<IoArrowBackCircleOutline className="hidden text-slate-300 md:block md:mr-3" size={26} />
 									</button>
 									<div className="font-bold text-2xl text-nav-dark">
-										{routeNumber}
+										{routeName}
 									</div>
 								</div>
 
@@ -196,12 +226,14 @@ const BusEstimateArrival = () => {
 
 
 						<div className="grid grid-cols-2 divide-x divide-transparent h-10 border border-gradient-start rounded-lg overflow-hidden">
-							<button className="flex justify-center items-center text-white bg-gradient-start">
+							<button className="flex justify-center items-center text-white bg-gradient-start" onClick={() => setDirection(`${routeName}_0`)}>
 								<p className="whitespace-pre">往 </p>
 								{stopData.length > 0 &&
 									(<div>{stopData[0].StopName.Zh_tw}</div>)}
 							</button>
-							<button className="flex justify-center items-center text-gradient-start bg-white">
+							<button className="flex justify-center items-center text-gradient-start bg-white"
+								onClick={() => setDirection(`${routeName}_1`)}
+							>
 								<p className="whitespace-pre">往 </p>
 								{stopData.length > 0 &&
 									(<div>{stopData[(stopData.length) - 1].StopName.Zh_tw}</div>)}
@@ -231,17 +263,43 @@ const BusEstimateArrival = () => {
 								</div>
 							</li>
 
-
 							{stopData.map((stop) => {
 								return (
 									<li className="flex items-center py-3 first:pt-0 last:pb-0 relative" key={stop.StopUID}>
 										<div className="flex items-center">
 											<div className="flex items-center">
-												<Button backgroundColor="#FF6464"
-													fontSize='12px'
-													fontColor='#FFF'>
-													{Math.floor(stop.estimateTime / 60)}分
-												</Button >
+												{/* 判斷站牌狀態＆到站時間 */}
+												{stop.StopStatus === 4 ?
+													(<Button backgroundColor="#FF6464"
+														fontSize='12px'
+														fontColor='#FFF'>今日未營運
+													</Button >) :
+													stop.StopStatus === 3 ?
+														(<Button backgroundColor="#F8F8FB"
+															fontSize='12px'
+															fontColor='#8C90AB'>末班駛離
+														</Button >) :
+														stop.StopStatus === 2 ?
+															(<Button backgroundColor="#F8F8FB"
+																fontSize='12px'
+																fontColor='#8C90AB'>交管不停靠
+															</Button >) :
+															stop.StopStatus === 1 || stop.StopStatus === undefined ?
+																(<Button backgroundColor="#F8F8FB"
+																	fontSize='12px'
+																	fontColor='#8C90AB'>尚未發車
+																</Button >) :
+																stop.EstimateTime <= 120 ?
+																	<Button backgroundColor="#FF6464"
+																		fontSize='12px'
+																		fontColor='#FFF'>
+																		即將到站
+																	</Button > :
+																	<Button backgroundColor="#FFE5E5"
+																		fontSize='14px'
+																		fontColor='#FF6464'>
+																		{Math.floor(stop.EstimateTime / 60)} 分
+																	</Button >}
 												<p className="text-nav-dark mx-3">
 													{stop.StopName.Zh_tw}
 												</p>

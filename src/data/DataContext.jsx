@@ -9,6 +9,7 @@ export const DataProvider = (props) => {
 	const [routeNumber, setRouteNumber] = useState(''); // 搜尋公車路線
 	const [city, setCity] = useState('臺北市'); // choose city
 	const [response, setResponse] = useState([]); // 搜出來的路線資料
+	const [routeName, setRouteName] = useState("")
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
 
 	// 把 city 陣列轉成中英對照的物件型態 ex. {"台北市" : "Taipei"}
@@ -30,12 +31,13 @@ export const DataProvider = (props) => {
 
 				const accessToken = await getAuthorizationHeader();
 				// ${cityObj[setCity的值]}
-				const RoutesRes = await axios.get(`${api}Route/City/${CityObj[city]}?%24format=JSON`,
+				const RoutesRes = await axios.get(`${api}Route/City/${CityObj[city]}?format=JSON`,
 					{
 						headers: {
 							"authorization": "Bearer " + accessToken,
 						},
 					});
+
 				setResponse(RoutesRes.data.filter(route => route.RouteName.Zh_tw.includes(`${routeNumber}`)));
 			}
 			if (city && routeNumber !== "") {
@@ -49,10 +51,10 @@ export const DataProvider = (props) => {
 
 	return (
 		<DataContext.Provider value={{
-			message: 'This is from the context!',
 			routeNumber, setRouteNumber,
 			city, setCity, handleCityValue,
-			response, setResponse, api, CityObj
+			response, setResponse, api, CityObj,
+			routeName, setRouteName
 		}}>
 			{props.children}
 		</DataContext.Provider>

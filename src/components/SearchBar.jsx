@@ -6,8 +6,8 @@ import cityList from "../data/cityList";
 
 
 
-const SearchBar = () => {
-	const { routeNumber, setRouteNumber, handleCityValue, response } = useContext(DataContext);
+const SearchBar = ({ routeResponse }) => {
+	const { routeNumber, setRouteNumber, handleCityValue, response, setRouteName } = useContext(DataContext);
 	const pressUnit = ['紅', '綠', '橘', '藍', '棕', '黃', 'F', 'R', 'T', '幹線', '先導', '內科', '貓空', '市民', '南軟', '跳蛙', '夜間', '小'];
 
 
@@ -69,7 +69,9 @@ const SearchBar = () => {
 					(<ul className="h-72 px-4 mt-2 overflow-y-auto divide-y divide-slate-200 
 					md:px-10 md:mt-3 md:h-60 ">
 						{response.map((route) => (
-							<Link to={`/${route.City}/${route.RouteUID}`} key={route.RouteUID} className="block">
+							<Link to={`/${route.City}/${route.RouteUID}`} key={route.RouteUID} className="block"
+								onClick={() => setRouteName(route.RouteName.Zh_tw)}
+							>
 								<li className="flex justify-between py-3.5 md:pr-3">
 									<p className="font-bold">{route.RouteName.Zh_tw}</p>
 									<p className="flex font-light items-center text-sm">
