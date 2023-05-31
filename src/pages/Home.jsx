@@ -11,8 +11,7 @@ import { IoLocationSharp, IoHeart } from "react-icons/io5";
 
 
 
-const Home = () => {
-
+const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setCity }) => {
 	return (
 		<>
 			<div className="flex flex-col h-screen">
@@ -41,7 +40,12 @@ const Home = () => {
 					</div>
 
 
-					<SearchBar />
+					<SearchBar routeNumber={routeNumber}
+						setRouteNumber={setRouteNumber}
+						routeName={routeName}
+						setRouteName={setRouteName}
+						city={city}
+						setCity={setCity} />
 
 
 					<div>

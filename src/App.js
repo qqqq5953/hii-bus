@@ -1,23 +1,34 @@
 import { Routes, Route } from "react-router-dom";
+import { useState } from "react";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Search from "./pages/Search";
 import BusStatusPage from "./pages/BusStatusPage";
-import { DataProvider } from "./data/DataContext";
 
 
 
 function App() {
+  const [routeNumber, setRouteNumber] = useState(""); // 搜尋公車路線
+  const [routeName, setRouteName] = useState("");
+  const [city, setCity] = useState('臺北市'); // choose city
+
   return (
     <div className="App">
-      <DataProvider>
-        <Routes>
-          <Route path="/" element={<Home />}></Route>
-          <Route path="/search" element={<Search />}></Route>
-          <Route path="/:city/:RouteUID" element={<BusStatusPage />} ></Route>
-          <Route path="*" element={<NotFound />}></Route>
-        </Routes>
-      </DataProvider>
+      <Routes>
+        <Route path="/" element={<Home
+          routeNumber={routeNumber}
+          setRouteNumber={setRouteNumber}
+          routeName={routeName}
+          setRouteName={setRouteName}
+          city={city}
+          setCity={setCity} />}></Route>
+        <Route path="/search" element={<Search />}></Route>
+        <Route path="/:city/:RouteUID" element={<BusStatusPage
+          routeNumber={routeNumber}
+          routeName={routeName}
+          city={city} />} ></Route>
+        <Route path="*" element={<NotFound />}></Route>
+      </Routes>
     </div>
   );
 }
