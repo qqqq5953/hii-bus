@@ -10,20 +10,32 @@ import cityList from "../data/cityList";
 import axios from "axios";
 
 
-const BusStatusPage = ({ routeNumber, routeName, city }) => {
-	// const { RouteUID, city } = useParams();
-	// console.log('RouteUID', RouteUID);
-	// console.log('Params的city', city);
-	// const location = useLocation();
-	// console.log('location', location);
-	// console.log('routeNumber', routeNumber);
-	// console.log('routeName', routeName);
-
+const BusStatusPage = ({ routeNumber, routeName, city, setFavorites, handleFavoriteClick }) => {
 	const [stopData, setStopData] = useState([]);
 	const [routeDirection, setRouteDirection] = useState("");
 	const [finalRoute, setFinalRoute] = useState({});
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
 	const navigate = useNavigate();
+
+	// const [isFavorite, setIsFavorite] = useState(false);
+	// const handleFavoriteClick = () => {
+	// 	if (isFavorite) {
+	// 		removeFavorite(id);
+	// 	} else {
+	// 		addFavorite(id);
+	// 	}
+	// 	setIsFavorite(!isFavorite);
+	// }
+
+	useEffect(() => {
+		// 從 localStorage 讀取已收藏的商品列表的邏輯
+		const storedFavorite = localStorage.getItem("favorites");
+		if (storedFavorite) {
+			setFavorites(JSON.parse(storedFavorite));
+		}
+	}, []);
+	console.log('favorites', favorites);
+
 
 	// 把 city 陣列轉成中英對照的物件型態 ex. {"台北市" : "Taipei"}
 	const CityObj = cityList.reduce((acc, item) => {
@@ -191,88 +203,91 @@ const BusStatusPage = ({ routeNumber, routeName, city }) => {
 		// console.log('directionToStyle', directionToStyle);
 	}, [routeDirection]);
 
-	// console.log('StopData', stopData);
+	console.log('StopData', stopData);
 	// console.log('外面state的routeDirection', routeDirection);
-
 
 
 	return (
 		<>
-			<div className="flex flex-col h-auto lg:h-screen">
+			<div className="h-auto lg:h-screen lg:flex lg:flex-col">
 				<Navbar className="hidden md:block" />
-				<div className="h-full">
-					<div className="bg-white w-full h-auto lg:flex lg:h-full lg:p-5 lg:bg-gray-100">
-						{/* 地圖來囉 */}
-						<div className="hidden md:block sticky h-full w-full lg:w-1/2">
-							<BusMap
-								routeNumber={routeNumber}
-								routeName={routeName}
-								city={city}
-								finalRoute={finalRoute} />
+				<div className="bg-white w-full h-auto lg:flex lg:h-full lg:p-5 lg:bg-gray-100">
+					{/* 地圖來囉 */}
+					<div className="hidden border border-red-400
+						md:block md:h-[400px] md:w-full md:sticky 
+						lg:w-11/12 lg:h-auto">
+						<BusMap
+							routeNumber={routeNumber}
+							routeName={routeName}
+							city={city}
+							finalRoute={finalRoute} />
+					</div>
+
+
+					{/* md 以上不顯示返回及顯示地圖鍵 地圖直線顯示 */}
+					<div className="p-4 
+				             md:px-10 
+				             lg:w-1/2 lg:border border-blue-400 lg:h-[500px] lg:bg-white lg:ml-3 lg:px-5 rounded-lg overflow-y-auto xl:h-[650px]">
+						<div className="flex box-border justify-between md:hidden">
+							<button type="button" onClick={() => {
+								navigate(-1);
+							}}>
+								<IoChevronBack className="text-slate-300" size={22} />
+							</button>
+							<button type="button" className="w-24 h-10 border border-slate-300 rounded-full text-sm text-slate-400 tracking-wider">
+								顯示地圖
+							</button>
 						</div>
 
 
-						{/* md 以上不顯示返回及顯示地圖鍵 地圖直線顯示 */}
-						<div className="p-4 
-				md:px-8 
-				lg:w-1/2 lg:bg-white mx-3 lg:p-4 rounded-lg overflow-y-auto">
-							<div className="flex box-border justify-between md:hidden">
-								<button type="button" onClick={() => {
-									navigate(-1);
-								}}>
-									<IoChevronBack className="text-slate-300" size={22} />
+						{/* 文字資訊那塊 */}
+						<main className="md:px-2 h-auto">
+							<div className="flex justify-between items-center">
+								<div className="px-2 py-2">
+									<div className="flex">
+										<button>
+											<IoArrowBackCircleOutline className="hidden text-slate-300 md:block md:mr-3" size={26} />
+										</button>
+										<div className="font-bold text-2xl text-nav-dark">
+											{routeName}
+										</div>
+									</div>
+
+									<div className="flex py-1 items-center text-nav-dark tracking-wider">
+										{from}
+										<span className="text-highlight px-1 text-lg">
+											<IoCode /></span>
+										{to}
+									</div>
+								</div>
+								<div>
+									<button>
+										<IoHeart className="text-2xl mr-3 text-gray-300 active:text-highlight"
+											onClick={handleFavoriteClick} />
+									</button>
+								</div>
+							</div>
+
+							<div className="grid grid-cols-2 divide-x divide-transparent h-10 border border-gradient-start rounded-lg overflow-hidden">
+
+								{/* 去回程 */}
+								<button className={directionFromStyle}
+									onClick={() => setRouteDirection(`${routeName}_0`)}>
+									<p className="whitespace-pre">往 </p>
+									{from}
 								</button>
-								<button type="button" className="w-24 h-10 border border-slate-300 rounded-full text-sm text-slate-400 tracking-wider">
-									顯示地圖
+
+								<button className={directionToStyle}
+									onClick={() => setRouteDirection(`${routeName}_1`)}
+								>
+									<p className="whitespace-pre">往 </p>
+									{to}
 								</button>
 							</div>
 
-							<main className="md:px-2 h-auto lg:px-4">
-								<div className="flex justify-between items-center">
-									<div className="px-2 py-2">
-										<div className="flex">
-											<button>
-												<IoArrowBackCircleOutline className="hidden text-slate-300 md:block md:mr-3" size={26} />
-											</button>
-											<div className="font-bold text-2xl text-nav-dark">
-												{routeName}
-											</div>
-										</div>
-
-										<div className="flex py-1 items-center text-nav-dark tracking-wider">
-											{from}
-											<span className="text-highlight px-1 text-lg">
-												<IoCode /></span>
-											{to}
-										</div>
-									</div>
-									<div>
-										<button>
-											<IoHeart className="text-2xl mr-3 text-gray-300 active:text-highlight" />
-										</button>
-									</div>
-								</div>
-
-								<div className="grid grid-cols-2 divide-x divide-transparent h-10 border border-gradient-start rounded-lg overflow-hidden">
-
-									{/* 去回程 */}
-									<button className={directionFromStyle}
-										onClick={() => setRouteDirection(`${routeName}_0`)}>
-										<p className="whitespace-pre">往 </p>
-										{from}
-									</button>
-
-									<button className={directionToStyle}
-										onClick={() => setRouteDirection(`${routeName}_1`)}
-									>
-										<p className="whitespace-pre">往 </p>
-										{to}
-									</button>
-								</div>
-
-								{/* 公車到站狀態 */}
-								<ul className="px-2 py-3 divide-y divide-slate-200 md:py-6">
-									{/* <li className="flex justify-between items-center py-3 h-auto first:pt-0 last:pb-0 relative">
+							{/* 公車到站狀態 */}
+							<ul className="px-2 py-3 divide-y divide-slate-200 md:py-6 lg:py-4">
+								{/* <li className="flex justify-between items-center py-3 h-auto first:pt-0 last:pb-0 relative">
 										<div className="flex items-center">
 											<Button backgroundColor="#FF6464"
 												fontSize='12px'
@@ -293,68 +308,68 @@ const BusStatusPage = ({ routeNumber, routeName, city }) => {
 										</div>
 									</li> */}
 
-									{stopData.map((stop, index) => {
-										const isFirstItem = index === 0;
-										// const isLastItem = index === stopData.length - 1;
+								{stopData.map((stop, index) => {
+									const isFirstItem = index === 0;
+									// const isLastItem = index === stopData.length - 1;
 
-										return (
-											<li className="flex items-center py-3 
+									return (
+										<li className="flex items-center py-3 
 											first:pt-0 last:pb-0 relative" key={stop.StopUID}>
+											<div className="flex items-center">
 												<div className="flex items-center">
-													<div className="flex items-center">
-														{/* 判斷站牌狀態＆到站時間 */}
-														{stop.StopStatus === 4 ?
-															(<Button backgroundColor="#FF6464"
+													{/* 判斷站牌狀態＆到站時間 */}
+													{stop.StopStatus === 4 ?
+														(<Button backgroundColor="#FF6464"
+															fontSize='12px'
+															fontColor='#FFF'>今日未營運
+														</Button >) :
+														stop.StopStatus === 3 ?
+															(<Button backgroundColor="#F8F8FB"
 																fontSize='12px'
-																fontColor='#FFF'>今日未營運
+																fontColor='#8C90AB'>末班駛離
 															</Button >) :
-															stop.StopStatus === 3 ?
+															stop.StopStatus === 2 ?
 																(<Button backgroundColor="#F8F8FB"
 																	fontSize='12px'
-																	fontColor='#8C90AB'>末班駛離
+																	fontColor='#8C90AB'>交管不停靠
 																</Button >) :
-																stop.StopStatus === 2 ?
+																stop.StopStatus === 1 || stop.StopStatus === undefined ?
 																	(<Button backgroundColor="#F8F8FB"
 																		fontSize='12px'
-																		fontColor='#8C90AB'>交管不停靠
+																		fontColor='#8C90AB'>尚未發車
 																	</Button >) :
-																	stop.StopStatus === 1 || stop.StopStatus === undefined ?
-																		(<Button backgroundColor="#F8F8FB"
+																	stop.EstimateTime <= 120 ?
+																		<Button backgroundColor="#FF6464"
 																			fontSize='12px'
-																			fontColor='#8C90AB'>尚未發車
-																		</Button >) :
-																		stop.EstimateTime <= 120 ?
-																			<Button backgroundColor="#FF6464"
-																				fontSize='12px'
-																				fontColor='#FFF'>
-																				即將到站
-																			</Button > :
-																			<Button backgroundColor="#FFE5E5"
-																				fontSize='14px'
-																				fontColor='#FF6464'>
-																				{Math.floor(stop.EstimateTime / 60)} 分
-																			</Button >}
-														<p className="text-nav-dark mx-3">
-															{stop.StopName.Zh_tw}
-														</p>
-													</div>
+																			fontColor='#FFF'>
+																			即將到站
+																		</Button > :
+																		<Button backgroundColor="#FFE5E5"
+																			fontSize='14px'
+																			fontColor='#FF6464'>
+																			{Math.floor(stop.EstimateTime / 60)} 分
+																		</Button >}
+													<p className="text-nav-dark mx-3">
+														{stop.StopName.Zh_tw}
+													</p>
 												</div>
-												<div className={`${isFirstItem ? 'absolute -right-3 w-0.5 h-10 bg-slate-200 mt-8 ' : 'absolute -right-3 w-0.5 h-16 py-6 bg-slate-200'}`} >
+											</div>
+											<div className={`${isFirstItem ? 'absolute -right-3 w-0.5 h-10 bg-slate-200 mt-8 ' : 'absolute -right-3 w-0.5 h-16 py-6 bg-slate-200'}`} >
 
-													<div className="relative h-2 w-2 right-[3px] 
-					after:content[''] rounded-full border-[2px] border-slate-200 bg-white"/>
-												</div>
-											</li>
-										)
-									})}
+												<div className="relative h-2 w-2 right-[3px] 
+													after:content[''] rounded-full border-[2px] border-slate-200 bg-white"/>
+											</div>
+										</li>
+									)
+								})}
 
 
-								</ul>
-							</main>
-						</div>
-
+							</ul>
+						</main>
 					</div>
+
 				</div>
+
 				<Footer />
 			</div>
 		</>

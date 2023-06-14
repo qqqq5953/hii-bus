@@ -1,3 +1,4 @@
+// import { useContext } from "react";
 import Footer from "../components/Footer";
 import SearchBar from "../components/SearchBar";
 import MLogo from "../images/M-logo.svg";
@@ -11,7 +12,9 @@ import { IoLocationSharp, IoHeart } from "react-icons/io5";
 
 
 
-const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setCity }) => {
+const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setCity }, props) => {
+	
+
 	return (
 		<>
 			<div className="flex flex-col h-screen">

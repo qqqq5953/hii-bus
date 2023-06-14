@@ -1,14 +1,9 @@
-import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
-// import stopIcon from "../images/stopIcon.png";
 
 
-
-
-const BusMap = ({ routeNumber, routeName, city, finalRoute }) => {
-
+const BusMap = ({ routeName, finalRoute }) => {
 	const defaultDirection = finalRoute[`${routeName}_0`];
 	const stopLonObj = defaultDirection?.map((item) => {
 		return {
@@ -43,23 +38,25 @@ const BusMap = ({ routeNumber, routeName, city, finalRoute }) => {
 		iconAnchor: [13, 28],
 		popupAnchor: [1, -34],
 		shadowSize: [40, 31],
-
 	});
+
 
 	return (
 		<>
-			<MapContainer className="block object-cover md:h-1/2 lg:h-full"
-				center={[25.03577587529372, 121.52012180515803]} zoom={16} >
+			<MapContainer className="block object-cover md:h-full lg:h-full"
+				center={[25.03777047, 121.499672]} zoom={15} >
 				<TileLayer
-					attribution='Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+					attribution='Tiles &copy; Esri &mdash; '
 					url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
 				/>
-				{/* <p>{markers[10].geocode[0]}</p> */}
 
 				{markers?.map((marker) => (
-					<Marker position={marker.geocode} key={marker.geocode} icon={customIcon}>
-						<Popup><h2>{marker.popUp}</h2></Popup>
-					</Marker>
+					<div key={marker.geocode}>
+						{/* <RoutingMachine waypoints={marker.geocode} /> */}
+						<Marker position={marker.geocode} icon={customIcon}>
+							<Popup><h2>{marker.popUp}</h2></Popup>
+						</Marker>
+					</div>
 				))}
 			</MapContainer>
 		</>

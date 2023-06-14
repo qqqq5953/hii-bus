@@ -82,7 +82,7 @@ const SearchBarDark = (props) => {
 
 
 				<div className="hidden md:block absolute top-full z-10 rounded-lg bg-white w-full bg-opacity-80 shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
-					{routeNumber === "" && (
+					{/* {routeNumber === "" && (
 						<div className="grid grid-cols-6 gap-3 py-4 px-4 lg:grid-cols-7">
 							{pressUnit.map((option, index) => (
 								<button
@@ -92,7 +92,7 @@ const SearchBarDark = (props) => {
 									{option}
 								</button>))}
 						</div>
-					)}
+					)} */}
 
 					{routeNumber !== "" &&
 						(<div className="px-6 py-5 h-1/3">
