@@ -1,21 +1,48 @@
+import { useEffect } from "react";
 import Navbar from "../components/Navbar";
-// import FavoriteList from "../components/FavoriteList";
 import Footer from "../components/Footer";
+import { IoHeart, IoArrowForwardOutline } from "react-icons/io5";
 
 
-const MyFavorite = () => {
-	//{ favorites, handleFavoriteClick }
-	// const addFavorite = (productId) => {
-	// 	const UpdatedFavorite = [...favorites, productId];
-	// 	setFavorites(UpdatedFavorite);
-	// 	localStorage.setItem("favorites", JSON.stringify(UpdatedFavorite));
-	// }
+const MyFavorite = ({ favorites, setFavorites }) => {
+	// 加入最愛
+	const addToFavorites = (item) => {
+		setFavorites((prevFavorites) => [...prevFavorites, item]);
+	}
 
-	// const removeFavorite = (productId) => {
-	// 	const UpdatedFavorite = favorites.filter((id) => id !== productId);
-	// 	setFavorites(UpdatedFavorite);
-	// 	localStorage.setItem("favorites", JSON.stringify(UpdatedFavorite));
-	// }
+	// 移除最愛
+	const removeFavorites = (itemId) => {
+		setFavorites((prevFavorites) => prevFavorites.filter((item) => item.id !== itemId));
+		console.log('removeFavorites');
+	}
+
+	// 加入或移除最愛
+	const toggleFavorites = (item) => {
+		if (favorites.some((fav) => fav.id === item.id)) {
+			removeFavorites(item.id)
+		} else {
+			addToFavorites(item);
+		}
+	}
+
+	// 儲存最愛到 localStorage
+	useEffect(() => {
+		if (favorites.length === 0) return;
+		localStorage.setItem('favorites', JSON.stringify(favorites))
+	}, [favorites]);
+
+	// 從 localStorage 讀取最愛：畫面初始渲染時讀取
+	useEffect(() => {
+		const storedFavorites = localStorage.getItem('favorites');
+		// JSON.parse：JSON字串變物件
+		if (storedFavorites) {
+			setFavorites(JSON.parse(storedFavorites));
+		}
+		console.log('storedFavorites', storedFavorites);
+	}, []);
+
+
+	console.log('favorites', favorites);
 
 
 	return (
@@ -35,11 +62,26 @@ const MyFavorite = () => {
 								<p className="w-1/3">起始站與終點站</p>
 								<p className="w-1/3 text-center">加入 / 移除收藏</p>
 							</li>
-							{/* <FavoriteList
-								addFavorite={addFavorite}
-								removeFavorite={removeFavorite} 
-								favorites={favorites}
-								handleFavoriteClick={handleFavoriteClick}/> */}
+
+							{favorites.map((item) => (
+								<li className="text-center hover:bg-gray-100 flex px-2 py-4"
+									key={item.id}>
+									<p className="w-1/3 font-semibold text-nav-dark
+ 										md:text-lg">
+										{item.routeName}
+									</p>
+									<div className="flex w-1/3 justify-center items-center">
+										<p className="text-nav-dark text-md">
+											{item.from}</p>
+										<p className="text-highlight px-1"><IoArrowForwardOutline /></p>
+										<p>{item.to}</p>
+									</div>
+									<button className="w-1/3 flex justify-center">
+										<IoHeart className="text-2xl text-gray-300 active:text-highlight"
+											onClick={() => toggleFavorites(item)} />
+									</button>
+								</li>
+							))}
 						</ul>
 					</div>
 				</div>

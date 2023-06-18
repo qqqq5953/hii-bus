@@ -14,11 +14,11 @@ const BusMap = ({ routeName, finalRoute }) => {
 	});
 
 	// const stopLocationLat = defaultDirection.StopPosition.PositionLat;
-	console.log('defaultDirection', defaultDirection);
+	// console.log('defaultDirection', defaultDirection);
 
 	// console.log('Map裡面的finalRoute', finalRoute);
 	// console.log('Map裡面的routeName', routeName);
-	console.log('stopLonObj', stopLonObj);
+	// console.log('stopLonObj', stopLonObj);
 	// console.log('stopLocationLat', stopLocationLat);
 
 	const markers = stopLonObj?.map((item) => {
@@ -27,7 +27,7 @@ const BusMap = ({ routeName, finalRoute }) => {
 			popUp: item.key,
 		}
 	});
-	console.log('markers', markers);
+	// console.log('markers', markers);
 
 
 	const customIcon = new Icon({

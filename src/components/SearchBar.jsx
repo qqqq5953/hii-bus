@@ -67,6 +67,8 @@ const SearchBar = ({ routeNumber, setRouteNumber, routeName, setRouteName, city,
 
 	}, [city, routeNumber]);
 
+	console.log('response', response);
+
 	return (<>
 		<div className="relative grid grid-cols-3 divide-x divide-gray-300 py-1.5 w-10/12 mx-auto mt-4 border border-gradient-start rounded-lg bg-white
                md:w-8/12 lg:w-1/2">
@@ -111,7 +113,7 @@ const SearchBar = ({ routeNumber, setRouteNumber, routeName, setRouteName, city,
 					(<ul className="h-72 px-4 mt-2 overflow-y-auto divide-y divide-slate-200 
 					md:px-10 md:mt-3 md:h-60 ">
 						{response.map((route) => (
-							<Link to={`/${route.City}/${route.RouteUID}`} key={route.RouteUID} className="block"
+							<Link to={`/${route.City}/${route.RouteName.Zh_tw}`} key={route.RouteUID} className="block"
 								onClick={() => setRouteName(route.RouteName.Zh_tw)}
 							>
 								<li className="flex justify-between py-3.5 md:pr-3">

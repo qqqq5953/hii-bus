@@ -1,6 +1,6 @@
 import { IoCode, IoHeart, IoChevronBack, IoBus, IoArrowBackCircleOutline } from "react-icons/io5";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Button from "../components/Button";
 import BusMap from "../util/BusMap";
 import Footer from "../components/Footer";
@@ -10,31 +10,14 @@ import cityList from "../data/cityList";
 import axios from "axios";
 
 
-const BusStatusPage = ({ routeNumber, routeName, city, setFavorites, handleFavoriteClick }) => {
-	const [stopData, setStopData] = useState([]);
+const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, setFavorites }) => {
+	// const [stopData, setStopData] = useState([]);
 	const [routeDirection, setRouteDirection] = useState("");
 	const [finalRoute, setFinalRoute] = useState({});
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
 	const navigate = useNavigate();
-
-	// const [isFavorite, setIsFavorite] = useState(false);
-	// const handleFavoriteClick = () => {
-	// 	if (isFavorite) {
-	// 		removeFavorite(id);
-	// 	} else {
-	// 		addFavorite(id);
-	// 	}
-	// 	setIsFavorite(!isFavorite);
-	// }
-
-	useEffect(() => {
-		// 從 localStorage 讀取已收藏的商品列表的邏輯
-		const storedFavorite = localStorage.getItem("favorites");
-		if (storedFavorite) {
-			setFavorites(JSON.parse(storedFavorite));
-		}
-	}, []);
-	console.log('favorites', favorites);
+	const { cityselect } = useParams();
+	const { routeName } = useParams();
 
 
 	// 把 city 陣列轉成中英對照的物件型態 ex. {"台北市" : "Taipei"}
@@ -51,20 +34,28 @@ const BusStatusPage = ({ routeNumber, routeName, city, setFavorites, handleFavor
 		if (!city) return;
 
 		const accessToken = await getAuthorizationHeader();
-		const eta = axios.get(`${api}EstimatedTimeOfArrival/City/${CityObj[city]}/${routeNumber}?%24select=StopUID%2CDirection%2CEstimateTime%2CStopStatus&%24format=JSON`, {
+		const eta = axios.get(`${api}EstimatedTimeOfArrival/City/${CityObj[city]}/${routeName
+			}?%24select=StopUID%2CDirection%2CEstimateTime%2CStopStatus&%24format=JSON`, {
 			headers: {
 				"authorization": "Bearer " + accessToken,
 			},
 		});
-		const stop = axios.get(`${api}StopOfRoute/City/${CityObj[city]}/${routeNumber}?%24select=RouteName%2CDirection%2CStops&%24format=JSON`, {
+		// console.log('eta', eta);
+		const stop = axios.get(`${api}StopOfRoute/City/${CityObj[city]}/${routeName
+			}?%24select=RouteName%2CDirection%2CStops&%24format=JSON`, {
 			headers: {
 				"authorization": "Bearer " + accessToken,
 			},
 		});
 		const result = await Promise.all([eta, stop]);
-		// console.log('result', result);
+		console.log('result', result);
 		const etaRes = result[0].data;
 		const stopRes = result[1].data;
+		// 當輸入無效路線號碼時
+		if (etaRes.length === 0 || stopRes.length === 0) {
+			navigate("/NotFound");
+			return;
+		}
 		// console.log('etaRes', etaRes);
 		// console.log('stopRes', stopRes);
 
@@ -78,7 +69,7 @@ const BusStatusPage = ({ routeNumber, routeName, city, setFavorites, handleFavor
 				StopStatus: eta.StopStatus,
 			}
 		});
-		// console.log('etas', etas);
+		console.log('etas', etas);
 
 		const stops = stopRes.map((item) => {
 			return {
@@ -154,6 +145,11 @@ const BusStatusPage = ({ routeNumber, routeName, city, setFavorites, handleFavor
 		setFinalRoute(innerFinalRoute);
 
 		const defaultStopsData = innerFinalRoute[defaultDirection];
+		// 當輸入無效路線號碼時
+		if (defaultStopsData === undefined) return;
+		// console.log('innerFinalRoute', innerFinalRoute);
+		// console.log('defaultDirection', defaultDirection);
+		// console.log('defaultStopsData', defaultStopsData);
 		const fromStopName = defaultStopsData[(defaultStopsData.length) - 1].StopName.Zh_tw;
 		const toStopName = defaultStopsData[0].StopName.Zh_tw;
 		setFrom(fromStopName);
@@ -165,7 +161,7 @@ const BusStatusPage = ({ routeNumber, routeName, city, setFavorites, handleFavor
 
 	useEffect(() => {
 		getAllRoutes();
-	}, []);
+	}, [routeName]);
 
 	const defaultButtonStyle = "flex justify-center items-center";
 	const [directionFromStyle, setDirectionFromStyle] = useState(defaultButtonStyle);
@@ -204,8 +200,38 @@ const BusStatusPage = ({ routeNumber, routeName, city, setFavorites, handleFavor
 	}, [routeDirection]);
 
 	console.log('StopData', stopData);
+	console.log('cityParams', cityselect);
 	// console.log('外面state的routeDirection', routeDirection);
 
+
+	// 加入最愛
+	const addToFavorites = (item) => {
+		setFavorites((prevFavorites) => [...prevFavorites, item]);
+	}
+
+	// 移除最愛
+	const removeFavorites = (itemId) => {
+		setFavorites((prevFavorites) => prevFavorites.filter((item) => item.id !== itemId));
+	}
+
+	// 加入或移除最愛
+	const toggleFavorites = (item) => {
+		if (favorites.some((fav) => fav.id === item.id)) {
+			removeFavorites(item.id)
+		} else {
+			addToFavorites(item);
+		}
+	}
+
+	// 儲存最愛到 localStorage
+	useEffect(() => {
+		if (favorites.length === 0) {
+			return;
+		}
+		localStorage.setItem('favorites', JSON.stringify(favorites))
+	}, [favorites]);
+
+	console.log('routeName', routeName);
 
 	return (
 		<>
@@ -213,7 +239,7 @@ const BusStatusPage = ({ routeNumber, routeName, city, setFavorites, handleFavor
 				<Navbar className="hidden md:block" />
 				<div className="bg-white w-full h-auto lg:flex lg:h-full lg:p-5 lg:bg-gray-100">
 					{/* 地圖來囉 */}
-					<div className="hidden border border-red-400
+					<div className="hidden 
 						md:block md:h-[400px] md:w-full md:sticky 
 						lg:w-11/12 lg:h-auto">
 						<BusMap
@@ -227,7 +253,7 @@ const BusStatusPage = ({ routeNumber, routeName, city, setFavorites, handleFavor
 					{/* md 以上不顯示返回及顯示地圖鍵 地圖直線顯示 */}
 					<div className="p-4 
 				             md:px-10 
-				             lg:w-1/2 lg:border border-blue-400 lg:h-[500px] lg:bg-white lg:ml-3 lg:px-5 rounded-lg overflow-y-auto xl:h-[650px]">
+				             lg:w-1/2 lg:h-[500px] lg:bg-white lg:ml-3 lg:px-5 rounded-lg overflow-y-auto xl:h-[650px]">
 						<div className="flex box-border justify-between md:hidden">
 							<button type="button" onClick={() => {
 								navigate(-1);
@@ -263,7 +289,7 @@ const BusStatusPage = ({ routeNumber, routeName, city, setFavorites, handleFavor
 								<div>
 									<button>
 										<IoHeart className="text-2xl mr-3 text-gray-300 active:text-highlight"
-											onClick={handleFavoriteClick} />
+											onClick={() => addToFavorites({ id: routeName, routeName: routeName, from: from, to: to })} />
 									</button>
 								</div>
 							</div>
