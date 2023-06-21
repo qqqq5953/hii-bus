@@ -1,4 +1,4 @@
-// import { useContext } from "react";
+import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import SearchBar from "../components/SearchBar";
 import MLogo from "../images/M-logo.svg";
@@ -11,26 +11,29 @@ import Bus from "../images/M-bus-gif.png";
 import { IoLocationSharp, IoHeart } from "react-icons/io5";
 
 
-
 const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setCity }, props) => {
-	
+
 
 	return (
 		<>
 			<div className="flex flex-col h-screen">
 				<nav className="bg-nav-dark h-14 flex justify-between items-center md:h-16">
-					<img src={LogoWhite} alt="hi bus nav logo" className="mx-5" />
+					<Link to="/">
+						<img src={LogoWhite} alt="hi bus nav logo" className="mx-5" />
+					</Link>
 					<div className="flex
                md:w-2/5 justify-end mr-2
                lg:w-1/3 lg:mr-10">
-						<button className="flex text-white hover:text-yellow-400" id="myLocation">
+						<Link className="flex text-white hover:text-yellow-400" id="myLocation"
+							to="/nearbystop">
 							<IoLocationSharp className="mr-3 md:mr-1" size={22} />
 							<span className="hidden md:block font-light mr-3">附近站牌</span>
-						</button>
-						<button className="flex text-white hover:text-yellow-400" id="myFavorite">
+						</Link>
+						<Link className="flex text-white hover:text-yellow-400" id="myFavorite"
+							to="/myfavorite">
 							<IoHeart className="md:mr-1" size={22} />
 							<span className="hidden md:block font-light mr-3">我的收藏</span>
-						</button>
+						</Link>
 					</div>
 				</nav>
 				<div className="h-1.5 animate-color "></div>

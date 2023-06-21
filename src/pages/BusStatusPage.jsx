@@ -16,7 +16,6 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 	const [finalRoute, setFinalRoute] = useState({});
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
 	const navigate = useNavigate();
-	const { cityselect } = useParams();
 	const { routeName } = useParams();
 
 
@@ -147,9 +146,6 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 		const defaultStopsData = innerFinalRoute[defaultDirection];
 		// 當輸入無效路線號碼時
 		if (defaultStopsData === undefined) return;
-		// console.log('innerFinalRoute', innerFinalRoute);
-		// console.log('defaultDirection', defaultDirection);
-		// console.log('defaultStopsData', defaultStopsData);
 		const fromStopName = defaultStopsData[(defaultStopsData.length) - 1].StopName.Zh_tw;
 		const toStopName = defaultStopsData[0].StopName.Zh_tw;
 		setFrom(fromStopName);
@@ -173,7 +169,7 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 	// 當觸發 direction 改變時
 	useEffect(() => {
 		if (!routeDirection) return;
-		console.log('routeDirection', routeDirection);
+		// console.log('routeDirection', routeDirection);
 
 		const newStopData = finalRoute[routeDirection]; // 外面的 finalRoute
 		if (newStopData === undefined) {
@@ -200,7 +196,6 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 	}, [routeDirection]);
 
 	console.log('StopData', stopData);
-	console.log('cityParams', cityselect);
 	// console.log('外面state的routeDirection', routeDirection);
 
 
@@ -231,7 +226,7 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 		localStorage.setItem('favorites', JSON.stringify(favorites))
 	}, [favorites]);
 
-	console.log('routeName', routeName);
+	// console.log('routeName', routeName);
 
 	return (
 		<>

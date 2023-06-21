@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import MyFavorite from "./pages/MyFavorite";
 import BusStatusPage from "./pages/BusStatusPage";
+import NearByBusStop from "./pages/NearByBusStop";
 
 
 function App() {
@@ -37,6 +38,9 @@ function App() {
           setStopData={setStopData}
           favorites={favorites}
           setFavorites={setFavorites} />} >
+        </Route>
+
+        <Route path="nearbystop" element={<NearByBusStop />}>
         </Route>
 
         <Route path="*" element={<NotFound />}></Route>

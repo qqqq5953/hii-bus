@@ -9,7 +9,9 @@ const Navbar = (props) => {
 	return (<>
 		<nav className={`${props.className}`}>
 			<div className="bg-nav-dark h-14 flex justify-between items-center md:h-16">
-				<img src={LogoWhite} alt="hi bus nav logo" className="mx-5 " />
+				<Link to="/">
+					<img src={LogoWhite} alt="hi bus nav logo" className="mx-5 " />
+				</Link>
 				<SearchBarDark className="hidden md:block" />
 				<div className="flex
                md:w-2/5 justify-end mr-2
