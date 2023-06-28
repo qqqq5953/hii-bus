@@ -1,10 +1,11 @@
-import { IoCode, IoHeart, IoChevronBack, IoBus, IoArrowBackCircleOutline } from "react-icons/io5";
+import { IoChevronBack, IoBus } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Button from "../components/Button";
 import BusMap from "../util/BusMap";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import BusStopStatus from "../components/BusStopStatus";
+import BusInformation from "../components/BusInformation";
 import getAuthorizationHeader from "../util/getAuthorizationHeader";
 import cityList from "../data/cityList";
 import axios from "axios";
@@ -198,10 +199,21 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 	console.log('StopData', stopData);
 	// console.log('外面state的routeDirection', routeDirection);
 
+	// 切換愛心按鈕顏色
+	const [isHighlighted, setIsHighlighted] = useState(false);
+	const toggleHeartColor = () => {
+		setIsHighlighted(!isHighlighted);
+	}
+	const getButtonClassName = () => {
+		if (isHighlighted) return "text-highlight";
+		return "text-gray-300";
+	}
+
 
 	// 加入最愛
 	const addToFavorites = (item) => {
 		setFavorites((prevFavorites) => [...prevFavorites, item]);
+		toggleHeartColor();
 	}
 
 	// 移除最愛
@@ -212,7 +224,7 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 	// 加入或移除最愛
 	const toggleFavorites = (item) => {
 		if (favorites.some((fav) => fav.id === item.id)) {
-			removeFavorites(item.id)
+			removeFavorites(item.id);
 		} else {
 			addToFavorites(item);
 		}
@@ -227,6 +239,7 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 	}, [favorites]);
 
 	// console.log('routeName', routeName);
+
 
 	return (
 		<>
@@ -261,37 +274,18 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 						</div>
 
 
-						{/* 文字資訊那塊 */}
+						{/* 路線名稱、起迄站那塊 */}
 						<main className="md:px-2 h-auto">
-							<div className="flex justify-between items-center">
-								<div className="px-2 py-2">
-									<div className="flex">
-										<button>
-											<IoArrowBackCircleOutline className="hidden text-slate-300 md:block md:mr-3" size={26} />
-										</button>
-										<div className="font-bold text-2xl text-nav-dark">
-											{routeName}
-										</div>
-									</div>
-
-									<div className="flex py-1 items-center text-nav-dark tracking-wider">
-										{from}
-										<span className="text-highlight px-1 text-lg">
-											<IoCode /></span>
-										{to}
-									</div>
-								</div>
-								<div>
-									<button>
-										<IoHeart className="text-2xl mr-3 text-gray-300 active:text-highlight"
-											onClick={() => addToFavorites({ id: routeName, routeName: routeName, from: from, to: to })} />
-									</button>
-								</div>
-							</div>
+							<BusInformation
+								routeName={routeName}
+								from={from}
+								to={to}
+								getButtonClassName={getButtonClassName}
+								addToFavorites={addToFavorites} />
 
 							<div className="grid grid-cols-2 divide-x divide-transparent h-10 border border-gradient-start rounded-lg overflow-hidden">
 
-								{/* 去回程 */}
+								{/* 去回程切換按鈕 */}
 								<button className={directionFromStyle}
 									onClick={() => setRouteDirection(`${routeName}_0`)}>
 									<p className="whitespace-pre">往 </p>
@@ -329,62 +323,7 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 										</div>
 									</li> */}
 
-								{stopData.map((stop, index) => {
-									const isFirstItem = index === 0;
-									// const isLastItem = index === stopData.length - 1;
-
-									return (
-										<li className="flex items-center py-3 
-											first:pt-0 last:pb-0 relative" key={stop.StopUID}>
-											<div className="flex items-center">
-												<div className="flex items-center">
-													{/* 判斷站牌狀態＆到站時間 */}
-													{stop.StopStatus === 4 ?
-														(<Button backgroundColor="#FF6464"
-															fontSize='12px'
-															fontColor='#FFF'>今日未營運
-														</Button >) :
-														stop.StopStatus === 3 ?
-															(<Button backgroundColor="#F8F8FB"
-																fontSize='12px'
-																fontColor='#8C90AB'>末班駛離
-															</Button >) :
-															stop.StopStatus === 2 ?
-																(<Button backgroundColor="#F8F8FB"
-																	fontSize='12px'
-																	fontColor='#8C90AB'>交管不停靠
-																</Button >) :
-																stop.StopStatus === 1 || stop.StopStatus === undefined ?
-																	(<Button backgroundColor="#F8F8FB"
-																		fontSize='12px'
-																		fontColor='#8C90AB'>尚未發車
-																	</Button >) :
-																	stop.EstimateTime <= 120 ?
-																		<Button backgroundColor="#FF6464"
-																			fontSize='12px'
-																			fontColor='#FFF'>
-																			即將到站
-																		</Button > :
-																		<Button backgroundColor="#FFE5E5"
-																			fontSize='14px'
-																			fontColor='#FF6464'>
-																			{Math.floor(stop.EstimateTime / 60)} 分
-																		</Button >}
-													<p className="text-nav-dark mx-3">
-														{stop.StopName.Zh_tw}
-													</p>
-												</div>
-											</div>
-											<div className={`${isFirstItem ? 'absolute -right-3 w-0.5 h-10 bg-slate-200 mt-8 ' : 'absolute -right-3 w-0.5 h-16 py-6 bg-slate-200'}`} >
-
-												<div className="relative h-2 w-2 right-[3px] 
-													after:content[''] rounded-full border-[2px] border-slate-200 bg-white"/>
-											</div>
-										</li>
-									)
-								})}
-
-
+								<BusStopStatus stopData={stopData} />
 							</ul>
 						</main>
 					</div>

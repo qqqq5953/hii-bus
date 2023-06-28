@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { IoHeart, IoArrowForwardOutline } from "react-icons/io5";
@@ -63,6 +63,7 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 								<p className="w-1/3 text-center">加入 / 移除收藏</p>
 							</li>
 
+							{/*我的收藏路線列表 */}
 							{favorites.map((item) => (
 								<li className="text-center hover:bg-gray-100 flex px-2 py-4"
 									key={item.id}>
@@ -77,7 +78,7 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 										<p>{item.to}</p>
 									</div>
 									<button className="w-1/3 flex justify-center">
-										<IoHeart className="text-2xl text-gray-300 active:text-highlight"
+										<IoHeart className="text-2xl text-highlight"
 											onClick={() => toggleFavorites(item)} />
 									</button>
 								</li>

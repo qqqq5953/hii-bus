@@ -8,7 +8,7 @@ const BusMap = ({ routeName, finalRoute }) => {
 	const stopLonObj = defaultDirection?.map((item) => {
 		return {
 			key: item.StopName.Zh_tw,
-			lon: item.StopPosition.PositionLon, // 經度
+			lng: item.StopPosition.PositionLon, // 經度
 			lat: item.StopPosition.PositionLat, // 緯度
 		}
 	});
@@ -16,7 +16,7 @@ const BusMap = ({ routeName, finalRoute }) => {
 
 	const markers = stopLonObj?.map((item) => {
 		return {
-			geocode: [item.lat, item.lon],
+			geocode: [item.lat, item.lng],
 			popUp: item.key,
 		}
 	});

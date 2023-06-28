@@ -1,9 +1,10 @@
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 import useGeolocation from "../util/useGeolocation";
-import BusMap from "../util/BusMap";
 
-const NearByBusStop = ({ routeNumber, routeName, city, finalRoute }) => {
+
+const NearByBusStop = ({ finalRoute }) => {
 	const location = useGeolocation();
+	// const { routeName } = useParams();
 	console.log("location", location);
 
 	return (
@@ -12,10 +13,7 @@ const NearByBusStop = ({ routeNumber, routeName, city, finalRoute }) => {
 				{location.loaded ? JSON.stringify(location) : "Geolocation not available"}
 			</div>
 			<div>
-				<BusMap
-					routeNumber={routeNumber}
-					city={city}
-					finalRoute={finalRoute} />
+				
 			</div>
 		</>
 	)
