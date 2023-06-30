@@ -2,7 +2,6 @@ import { IoCode, IoHeart, IoArrowBackCircleOutline } from "react-icons/io5";
 
 
 const BusInformation = ({ routeName, from, to, getButtonClassName, addToFavorites }) => {
-
 	return (
 		<>
 			<div className="flex justify-between items-center">

@@ -11,7 +11,7 @@ import cityList from "../data/cityList";
 import axios from "axios";
 
 
-const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, setFavorites }) => {
+const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites }) => {
 	// const [stopData, setStopData] = useState([]);
 	const [routeDirection, setRouteDirection] = useState("");
 	const [finalRoute, setFinalRoute] = useState({});
@@ -216,19 +216,6 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 		toggleHeartColor();
 	}
 
-	// 移除最愛
-	const removeFavorites = (itemId) => {
-		setFavorites((prevFavorites) => prevFavorites.filter((item) => item.id !== itemId));
-	}
-
-	// 加入或移除最愛
-	const toggleFavorites = (item) => {
-		if (favorites.some((fav) => fav.id === item.id)) {
-			removeFavorites(item.id);
-		} else {
-			addToFavorites(item);
-		}
-	}
 
 	// 儲存最愛到 localStorage
 	useEffect(() => {
@@ -251,9 +238,7 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 						md:block md:h-[400px] md:w-full md:sticky 
 						lg:w-11/12 lg:h-auto">
 						<BusMap
-							routeNumber={routeNumber}
 							routeName={routeName}
-							city={city}
 							finalRoute={finalRoute} />
 					</div>
 
@@ -288,15 +273,15 @@ const BusStatusPage = ({ routeNumber, city, stopData, setStopData, favorites, se
 								{/* 去回程切換按鈕 */}
 								<button className={directionFromStyle}
 									onClick={() => setRouteDirection(`${routeName}_0`)}>
-									<p className="whitespace-pre">往 </p>
-									{from}
+									<p className="whitespace-pre">往  </p>
+									<span className="font-bold tracking-wide">{from}</span>
 								</button>
 
 								<button className={directionToStyle}
 									onClick={() => setRouteDirection(`${routeName}_1`)}
 								>
-									<p className="whitespace-pre">往 </p>
-									{to}
+									<p className="whitespace-pre">往  </p>
+									<span className="font-bold tracking-wide">{to}</span>
 								</button>
 							</div>
 

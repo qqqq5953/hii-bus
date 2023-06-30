@@ -40,7 +40,9 @@ function App() {
           setFavorites={setFavorites} />} >
         </Route>
 
-        <Route path="nearbystop" element={<NearByBusStop />}>
+        <Route path="nearbystop" element={<NearByBusStop
+          city={city}
+          routeName={routeName} />}>
         </Route>
 
         <Route path="*" element={<NotFound />}></Route>
