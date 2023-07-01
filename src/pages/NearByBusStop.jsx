@@ -1,16 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import useGeolocation from "../util/useGeolocation";
 import getAuthorizationHeader from "../util/getAuthorizationHeader";
 import cityList from "../data/cityList";
-import BusMap from "../util/BusMap";
+import { LatLngBounds } from "leaflet";
+// import NearByMap from "../util/NearByMap";
+
 
 
 const NearByBusStop = ({ city, routeName }) => {
-	const location = useGeolocation();
-	// console.log("location", location);
+	const [stopInfo, setStopInfo] = useState({});
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
-
 	// 把 city 陣列轉成中英對照的物件型態 ex. {"台北市" : "Taipei"}
 	const CityObj = cityList.reduce((acc, item) => {
 		const chName = item.city_zh;
@@ -19,6 +19,32 @@ const NearByBusStop = ({ city, routeName }) => {
 		return acc;
 	}, {});
 
+	// 打API先跑該縣市全部站牌
+	const getAllStops = async () => {
+		if (!city) return;
+
+		const accessToken = await getAuthorizationHeader();
+		const StopsRes = await axios.get(`${api}Stop/City/${CityObj[city]}?%24select=StopPosition%2C%20StopName&%24format=JSON`, {
+			headers: {
+				"authorization": "Bearer " + accessToken,
+			}
+		})
+		const stopData = StopsRes.data;
+		// console.log("附近站牌 stopData", stopData);
+
+		// 取出各站牌位置及名稱
+		const result = stopData.map((stop) => {
+			return ({
+				StopName: stop.StopName.Zh_tw,
+				StopLat: stop.StopPosition.PositionLat,
+				StopLon: stop.StopPosition.PositionLon,
+			})
+		})
+
+		console.log('result', result);
+		setStopInfo(result)
+
+	}
 
 	// 計算兩個經緯度之間的距離（使用 Haversine 公式）
 	function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -33,47 +59,50 @@ const NearByBusStop = ({ city, routeName }) => {
 		return distance;
 	}
 
+
 	// 將角度轉換為弧度
 	function toRadians(degrees) {
 		return degrees * (Math.PI / 180);
 	}
 
-	// 獲取 500 公尺內站牌
-	function getNearbyStop() {
-		// 使用者位置經緯度
-		let userLat = 25.0443962;
-		let userLon = 121.5234677;
-	}
+	// 取得使用者所在位置座標
+	const location = useGeolocation();
+	// console.log("location", location);
+	const userLat = location.coordinates.lat;
+	const userLon = location.coordinates.lon;
+	console.log("userLat", userLat);
+	console.log("userLon", userLon);
 
-	// 打API跑該縣市全部站牌
 
-
-	// 儲存符合條件的站牌
+	// 取出 500 公尺內站牌，符合條件的 push 進以上陣列
 	const nearbyStops = [];
-
-
-	const getAllStops = async () => {
-		const accessToken = await getAuthorizationHeader();
-		const StopsRes = await axios.get(`${api}Stop/City/${CityObj[city]}?%24select=StopPosition%2C%20StopName&%24top=30&%24format=JSON`, {
-			headers: {
-				"authorization": "Bearer " + accessToken,
-			}
-		})
-		console.log("附近站牌 StopsRes", StopsRes);
-
-		const stopData = StopsRes.data;
-		console.log("附近站牌 stopData", stopData);
-
-		// 取出站牌位置及名稱
-		const stopInfo = stopData.map((stop) => {
-			return {
-				StopName: stop.StopName.Zh_tw,
-				StopLat: stop.StopPosition.PositionLat,
-				StopLon: stop.StopPosition.PositionLon,
-			}
-		})
-		console.log("stopInfo", stopInfo);
+	for (let i = 0; i < stopInfo.length; i++) {
+		// 用來儲存符合條件的站牌
+		const stop = stopInfo[i];
+		const distance = calculateDistance(userLat, userLon, stop.StopLat, stop.StopLon);
+		// console.log('distance', distance);
+		if (distance < 0.15) {
+			nearbyStops.push(stop);
+		} else {
+			continue;
+		}
 	}
+	console.log("nearbyStops", nearbyStops);
+
+	// 剔除重複的站牌
+	const finalNearbyStops = [];
+	nearbyStops.forEach((stop) => {
+		// 如果 finalNearbyStops 已有存在的值，不push stop.StopName === nearbyStops.StopName
+		const DuppliateIndex = finalNearbyStops.findIndex((obj) => {
+			return obj.StopName === stop.StopName
+		});
+		console.log("DuppliateIndex", DuppliateIndex);
+		if (DuppliateIndex === -1) {
+			finalNearbyStops.push(stop);
+		}
+	})
+	console.log("finalNearbyStops", finalNearbyStops);
+
 
 
 	useEffect(() => {
@@ -85,10 +114,10 @@ const NearByBusStop = ({ city, routeName }) => {
 	}, []);
 
 
-	console.log("附近站牌 routeName", typeof (routeName));
-	console.log("附近站牌 routeName", routeName);
-	console.log("defaultDirection", defaultDirection);
-	console.log("Map 內的 finalRoute", finalRoute);
+	// console.log("附近站牌 routeName", typeof (routeName));
+	// console.log("附近站牌 routeName", routeName);
+	// console.log("defaultDirection", defaultDirection);
+	// console.log("Map 內的 finalRoute", finalRoute);
 
 
 	return (
@@ -97,7 +126,7 @@ const NearByBusStop = ({ city, routeName }) => {
 				{location.loaded ? JSON.stringify(location) : "Geolocation not available"}
 			</div>
 			<div>
-				<BusMap routeName={routeName} />
+				{/* <NearByMap/> */}
 			</div>
 		</>
 	)

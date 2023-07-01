@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 const useGeolocation = () => {
 	const [location, setLocation] = useState({
 		loaded: false,
-		coordinates: { lat: "", lng: "" }, // 座標：緯度 latitude、經度 longitude
+		coordinates: { lat: "", lon: "" }, // 座標：緯度 latitude、經度 longitude
 	});
 
 	const onSuccess = (location) => {
@@ -11,7 +11,7 @@ const useGeolocation = () => {
 			loaded: true,
 			coordinates: {
 				lat: location.coords.latitude,
-				lng: location.coords.longitude,
+				lon: location.coords.longitude,
 			}
 		})
 		// console.log("coords", location.coords);
