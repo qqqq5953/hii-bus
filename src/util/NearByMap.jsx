@@ -3,28 +3,23 @@ import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
 
 
-const NearByMap = ({ finalRoute, routeName}) => {
-	// 取出使用者附近站牌的座標
-
-	const defaultDirection = finalRoute[`${routeName}`];
-	const stopLonObj = defaultDirection?.map((item) => {
+const NearByMap = ({ finalNearbyStops, location }) => {
+	const markers = finalNearbyStops?.map((item) => {
 		return {
-			key: item.StopName.Zh_tw,
-			lng: item.StopPosition.PositionLon, // 經度
-			lat: item.StopPosition.PositionLat, // 緯度
-		}
-	});
-
-
-	const markers = stopLonObj?.map((item) => {
-		return {
-			geocode: [item.lat, item.lng],
-			popUp: item.key,
+			geocode: [item.StopLat, item.StopLon],
+			popUp: item.StopName,
 		}
 	});
 	// console.log('markers', markers);
+	// console.log('地圖內 finalNearbyStops', finalNearbyStops);
 
 
+	// 取附近站牌的中心點
+	// const centerIndex = Math.floor(finalNearbyStops.length / 3);
+	const centerCoordinates = markers[0]?.geocode;
+	console.log("centerCoordinates", centerCoordinates);
+
+	// 建立站牌的 marker
 	const customIcon = new Icon({
 		iconUrl: require("../images/stopIcon.png"),
 		iconSize: [28, 28],
@@ -35,25 +30,39 @@ const NearByMap = ({ finalRoute, routeName}) => {
 		shadowSize: [40, 31],
 	});
 
+	// 建立使用者的 marker
+	const userIcon = new Icon({
+		iconUrl: "https://letswritetw.github.io/letswrite-leaflet-osm-locate/dist/dot.svg",
+		iconSize: [20, 20],
+	})
+	// console.log("my location", location);
+
 
 	return (
 		<>
-			<MapContainer className="block object-cover md:h-full lg:h-full"
-				center={[25.03777047, 121.499672]} zoom={15} >
-				<TileLayer
-					attribution='Tiles &copy; Esri &mdash; '
-					url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
-				/>
+			{centerCoordinates !== undefined &&
+				<MapContainer className="block object-cover h-full"
+					center={centerCoordinates} zoom={16} >
+					<TileLayer
+						attribution='Tiles &copy; Esri &mdash; '
+						url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+					/>
 
-				{markers?.map((marker) => (
-					<div key={marker.geocode}>
-						{/* <RoutingMachine waypoints={marker.geocode} /> */}
-						<Marker position={marker.geocode} icon={customIcon}>
-							<Popup><h2>{marker.popUp}</h2></Popup>
+					{markers?.map((marker) => (
+						<div key={marker.geocode}>
+							<Marker position={marker.geocode} icon={customIcon}>
+								<Popup><h2><b>{marker.popUp}</b></h2></Popup>
+							</Marker>
+						</div>
+					))}
+
+					{location.loaded && !location.error && (
+						<Marker icon={userIcon}
+							position={[location.coordinates.lat, location.coordinates.lon]}>
+
 						</Marker>
-					</div>
-				))}
-			</MapContainer>
+					)}
+				</MapContainer>}
 		</>
 	)
 }

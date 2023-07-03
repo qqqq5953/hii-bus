@@ -3,12 +3,13 @@ import axios from "axios";
 import useGeolocation from "../util/useGeolocation";
 import getAuthorizationHeader from "../util/getAuthorizationHeader";
 import cityList from "../data/cityList";
-import { LatLngBounds } from "leaflet";
-// import NearByMap from "../util/NearByMap";
+import NearByMap from "../util/NearByMap";
+import Navbar from "../components/Navbar";
+import Button from "../components/Button";
+import { IoLocationSharp, IoReload } from "react-icons/io5";
 
 
-
-const NearByBusStop = ({ city, routeName }) => {
+const NearByBusStop = ({ city }) => {
 	const [stopInfo, setStopInfo] = useState({});
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
 	// 把 city 陣列轉成中英對照的物件型態 ex. {"台北市" : "Taipei"}
@@ -39,11 +40,8 @@ const NearByBusStop = ({ city, routeName }) => {
 				StopLat: stop.StopPosition.PositionLat,
 				StopLon: stop.StopPosition.PositionLon,
 			})
-		})
-
-		console.log('result', result);
-		setStopInfo(result)
-
+		});
+		setStopInfo(result);
 	}
 
 	// 計算兩個經緯度之間的距離（使用 Haversine 公式）
@@ -59,7 +57,6 @@ const NearByBusStop = ({ city, routeName }) => {
 		return distance;
 	}
 
-
 	// 將角度轉換為弧度
 	function toRadians(degrees) {
 		return degrees * (Math.PI / 180);
@@ -67,11 +64,8 @@ const NearByBusStop = ({ city, routeName }) => {
 
 	// 取得使用者所在位置座標
 	const location = useGeolocation();
-	// console.log("location", location);
 	const userLat = location.coordinates.lat;
 	const userLon = location.coordinates.lon;
-	console.log("userLat", userLat);
-	console.log("userLon", userLon);
 
 
 	// 取出 500 公尺內站牌，符合條件的 push 進以上陣列
@@ -79,13 +73,14 @@ const NearByBusStop = ({ city, routeName }) => {
 	for (let i = 0; i < stopInfo.length; i++) {
 		// 用來儲存符合條件的站牌
 		const stop = stopInfo[i];
-		const distance = calculateDistance(userLat, userLon, stop.StopLat, stop.StopLon);
-		// console.log('distance', distance);
-		if (distance < 0.15) {
-			nearbyStops.push(stop);
+		const Distance = calculateDistance(userLat, userLon, stop.StopLat, stop.StopLon);
+		if (Distance < 0.25) {
+			const stopWithDistance = { ...stop, Distance };
+			nearbyStops.push(stopWithDistance);
 		} else {
 			continue;
 		}
+		// console.log("user distance", distance);
 	}
 	console.log("nearbyStops", nearbyStops);
 
@@ -96,13 +91,11 @@ const NearByBusStop = ({ city, routeName }) => {
 		const DuppliateIndex = finalNearbyStops.findIndex((obj) => {
 			return obj.StopName === stop.StopName
 		});
-		console.log("DuppliateIndex", DuppliateIndex);
 		if (DuppliateIndex === -1) {
 			finalNearbyStops.push(stop);
 		}
 	})
 	console.log("finalNearbyStops", finalNearbyStops);
-
 
 
 	useEffect(() => {
@@ -113,21 +106,55 @@ const NearByBusStop = ({ city, routeName }) => {
 		}
 	}, []);
 
-
-	// console.log("附近站牌 routeName", typeof (routeName));
-	// console.log("附近站牌 routeName", routeName);
-	// console.log("defaultDirection", defaultDirection);
-	// console.log("Map 內的 finalRoute", finalRoute);
+	// 手動重新整理頁面
+	const handleRefresh = () => {
+		window.location.reload();
+	};
 
 
 	return (
 		<>
-			<div className="text-3xl text-blue-400">
-				{location.loaded ? JSON.stringify(location) : "Geolocation not available"}
-			</div>
-			<div>
-				{/* <NearByMap/> */}
-			</div>
+			<Navbar />
+			<main className="h-screen border border-blue-400 xl:flex">
+				{/* 地圖區塊 */}
+				<div className="h-3/5 md:h-">
+					<NearByMap className="w-auto"
+						finalNearbyStops={finalNearbyStops}
+						location={location} />
+				</div>
+
+				{/* 站牌資訊 */}
+				<div className="h-2/5 px-5 pt-5 bg-white overflow-y-auto">
+					<div className="flex text-nav-dark justify-between">
+						<h1 className="text-lg font-medium">附近公車站牌
+							<span className="px-1.5 text-xs font-light text-slate-400">300m內</span>
+						</h1>
+						<button onClick={handleRefresh}>
+							<IoReload size={18} className="text-slate-400" />
+						</button>
+					</div>
+
+					<ul className="px-2 py-3 divide-y divide-slate-200">
+						{finalNearbyStops.map((stop) => (
+							<li className="flex justify-between py-2 align-middle"
+								key={stop.StopName}>
+								<div className="text-searchbar-dark">
+									<p className="font-medium leading-6">{stop.StopName}</p>
+									<p className="text-sm ">?條路線</p>
+								</div>
+								<div>
+									<Button backgroundColor="#F8F8FB" fontSize="15px"
+										fontColor="#8C90AB">
+										<IoLocationSharp size={14} />
+										{Math.floor(stop.Distance * 100)}0m
+									</Button>
+								</div>
+							</li>
+						))}
+
+					</ul>
+				</div>
+			</main>
 		</>
 	)
 }
