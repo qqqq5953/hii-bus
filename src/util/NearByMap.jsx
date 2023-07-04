@@ -8,15 +8,17 @@ const NearByMap = ({ finalNearbyStops, location }) => {
 		return {
 			geocode: [item.StopLat, item.StopLon],
 			popUp: item.StopName,
+			distance: item.Distance,
 		}
 	});
 	// console.log('markers', markers);
 	// console.log('地圖內 finalNearbyStops', finalNearbyStops);
 
-
 	// 取附近站牌的中心點
-	// const centerIndex = Math.floor(finalNearbyStops.length / 3);
-	const centerCoordinates = markers[0]?.geocode;
+	const userLat = location.coordinates?.lat;
+	const userLon = location.coordinates?.lon;
+	const centerCoordinates = [userLat, userLon];
+	// const centerCoordinates = markers[0]?.geocode;
 	console.log("centerCoordinates", centerCoordinates);
 
 	// 建立站牌的 marker
@@ -35,14 +37,15 @@ const NearByMap = ({ finalNearbyStops, location }) => {
 		iconUrl: "https://letswritetw.github.io/letswrite-leaflet-osm-locate/dist/dot.svg",
 		iconSize: [20, 20],
 	})
-	// console.log("my location", location);
 
 
 	return (
 		<>
-			{centerCoordinates !== undefined &&
-				<MapContainer className="block object-cover h-full"
-					center={centerCoordinates} zoom={16} >
+			{centerCoordinates[0] !== ""
+				&& centerCoordinates[1] !== ""
+				&&
+				(<MapContainer className="block object-cover h-full"
+					center={centerCoordinates} zoom={16.5} >
 					<TileLayer
 						attribution='Tiles &copy; Esri &mdash; '
 						url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
@@ -51,18 +54,20 @@ const NearByMap = ({ finalNearbyStops, location }) => {
 					{markers?.map((marker) => (
 						<div key={marker.geocode}>
 							<Marker position={marker.geocode} icon={customIcon}>
-								<Popup><h2><b>{marker.popUp}</b></h2></Popup>
+								<Popup>
+									<h2><b>{marker.popUp}</b></h2>
+									<p>距離 {Math.floor(marker.distance * 100)}0 m</p>
+								</Popup>
 							</Marker>
 						</div>
 					))}
 
 					{location.loaded && !location.error && (
 						<Marker icon={userIcon}
-							position={[location.coordinates.lat, location.coordinates.lon]}>
-
+							position={[userLat, userLon]}>
 						</Marker>
 					)}
-				</MapContainer>}
+				</MapContainer>)}
 		</>
 	)
 }

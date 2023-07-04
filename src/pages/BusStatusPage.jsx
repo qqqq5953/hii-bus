@@ -177,10 +177,9 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 			return;
 		}
 		setStopData(newStopData); // 帶入搜尋到的公車路線
-
 		const direction = routeDirection.split("_")[1];
 		// console.log('direction', direction);
-		console.log('finalRoute', finalRoute);
+		// console.log('finalRoute', finalRoute);
 
 
 		if (direction === "0") {
@@ -199,6 +198,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 	console.log('StopData', stopData);
 	// console.log('外面state的routeDirection', routeDirection);
 
+
 	// 切換愛心按鈕顏色
 	const [isHighlighted, setIsHighlighted] = useState(false);
 	const toggleHeartColor = () => {
@@ -210,22 +210,22 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 	}
 
 
-	// 加入最愛
+	// 加入收藏功能
 	const addToFavorites = (item) => {
-		setFavorites((prevFavorites) => [...prevFavorites, item]);
-		toggleHeartColor();
-	}
-
-
-	// 儲存最愛到 localStorage
-	useEffect(() => {
-		if (favorites.length === 0) {
+		// 檢查 localStorage 中是否已經存在相同的項目
+		const isDuplicate = favorites.some((fav) => fav.id === item.id);
+		if (isDuplicate) {
+			console.log("Item already exists in localStorage");
 			return;
 		}
-		localStorage.setItem('favorites', JSON.stringify(favorites))
-	}, [favorites]);
-
-	// console.log('routeName', routeName);
+		// 加入新項目至畫面上的資料
+		setFavorites((prevFavorites) => [...prevFavorites, item]);
+		// 加入新項目至 localStorage 中的資料
+		const updatedFavorites = [...favorites, item];
+		localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+		// 切換愛心顏色
+		toggleHeartColor();
+	}
 
 
 	return (
@@ -239,7 +239,8 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 						lg:w-11/12 lg:h-auto">
 						<BusMap
 							routeName={routeName}
-							finalRoute={finalRoute} />
+							finalRoute={finalRoute}
+							stopData={stopData} />
 					</div>
 
 
@@ -248,9 +249,9 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 				             md:px-10 
 				             lg:w-1/2 lg:h-[500px] lg:bg-white lg:ml-3 lg:px-5 rounded-lg overflow-y-auto xl:h-[650px]">
 						<div className="flex box-border justify-between md:hidden">
-							<button type="button" onClick={() => {
-								navigate(-1);
-							}}>
+							<button type="button" onClick={() =>
+								navigate(-1)
+							}>
 								<IoChevronBack className="text-slate-300" size={22} />
 							</button>
 							<button type="button" className="w-24 h-10 border border-slate-300 rounded-full text-sm text-slate-400 tracking-wider">
@@ -259,7 +260,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 						</div>
 
 
-						{/* 路線名稱、起迄站那塊 */}
+						{/* md 以上 路線名稱、起迄站那塊 */}
 						<main className="md:px-2 h-auto">
 							<BusInformation
 								routeName={routeName}

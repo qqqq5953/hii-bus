@@ -27,7 +27,6 @@ function App() {
         </Route>
 
         <Route path="/myfavorite" element={<MyFavorite
-          stopData={stopData}
           favorites={favorites}
           setFavorites={setFavorites} />}></Route>
 

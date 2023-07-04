@@ -1,35 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { IoHeart, IoArrowForwardOutline } from "react-icons/io5";
 
 
 const MyFavorite = ({ favorites, setFavorites }) => {
-	// 加入最愛
-	const addToFavorites = (item) => {
-		setFavorites((prevFavorites) => [...prevFavorites, item]);
-	}
-
-	// 移除最愛
+	// 移除收藏
 	const removeFavorites = (itemId) => {
-		setFavorites((prevFavorites) => prevFavorites.filter((item) => item.id !== itemId));
+		if (favorites.some((fav) => fav.id === itemId)) {
+			setFavorites((prevFavorites) => prevFavorites.filter((item) => item.id !== itemId));
+			// 移除 localStorage 中的資料
+			const updatedFavorites = favorites.filter((item) => item.id !== itemId);
+			localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+		}
 		console.log('removeFavorites');
 	}
-
-	// 加入或移除最愛
-	const toggleFavorites = (item) => {
-		if (favorites.some((fav) => fav.id === item.id)) {
-			removeFavorites(item.id)
-		} else {
-			addToFavorites(item);
-		}
-	}
-
-	// 儲存最愛到 localStorage
-	useEffect(() => {
-		if (favorites.length === 0) return;
-		localStorage.setItem('favorites', JSON.stringify(favorites))
-	}, [favorites]);
 
 	// 從 localStorage 讀取最愛：畫面初始渲染時讀取
 	useEffect(() => {
@@ -41,9 +26,7 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 		console.log('storedFavorites', storedFavorites);
 	}, []);
 
-
 	console.log('favorites', favorites);
-
 
 	return (
 		<>
@@ -60,7 +43,7 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 										   md:text-lg">
 								<p className="w-1/3">公車路線</p>
 								<p className="w-1/3">起始站與終點站</p>
-								<p className="w-1/3 text-center">加入 / 移除收藏</p>
+								<p className="w-1/3 text-center">移除收藏</p>
 							</li>
 
 							{/*我的收藏路線列表 */}
@@ -79,14 +62,13 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 									</div>
 									<button className="w-1/3 flex justify-center">
 										<IoHeart className="text-2xl text-highlight"
-											onClick={() => toggleFavorites(item)} />
+											onClick={() => removeFavorites(item.id)} />
 									</button>
 								</li>
 							))}
 						</ul>
 					</div>
 				</div>
-
 				<Footer />
 			</div>
 		</>

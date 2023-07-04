@@ -3,7 +3,7 @@ import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
 
 
-const BusMap = ({ routeName, finalRoute }) => {
+const BusMap = ({ routeName, finalRoute, stopData }) => {
 	const defaultDirection = finalRoute[`${routeName}_0`];
 	const stopLonObj = defaultDirection?.map((item) => {
 		return {
@@ -33,25 +33,36 @@ const BusMap = ({ routeName, finalRoute }) => {
 		shadowSize: [40, 31],
 	});
 
+	// 定出地圖中心點
+	const centerIndex = Math.floor(stopData.length / 2);
+	const centerLat = stopData[centerIndex]?.StopPosition.PositionLat;
+	const centerLon = stopData[centerIndex]?.StopPosition.PositionLon;
+	const centerCoords = [centerLat, centerLon];
+	// console.log("centerCoords", centerCoords);
 
 	return (
 		<>
-			<MapContainer className="block object-cover md:h-full lg:h-full"
-				center={[25.03777047, 121.499672]} zoom={15} >
-				<TileLayer
-					attribution='Tiles &copy; Esri &mdash; '
-					url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
-				/>
+			{centerCoords[0] !== undefined
+				&& centerCoords[1] !== undefined
+				&& (
+					<MapContainer className="block object-cover md:h-full lg:h-full"
+						center={centerCoords} zoom={14} >
+						<TileLayer
+							attribution='Tiles &copy; Esri &mdash; '
+							url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+						/>
 
-				{markers?.map((marker) => (
-					<div key={marker.geocode}>
-						{/* <RoutingMachine waypoints={marker.geocode} /> */}
-						<Marker position={marker.geocode} icon={customIcon}>
-							<Popup><h2>{marker.popUp}</h2></Popup>
-						</Marker>
-					</div>
-				))}
-			</MapContainer>
+						{markers?.map((marker) => (
+							<div key={marker.geocode}>
+								{/* <RoutingMachine waypoints={marker.geocode} /> */}
+								<Marker position={marker.geocode} icon={customIcon}>
+									<Popup><h2>{marker.popUp}</h2></Popup>
+								</Marker>
+							</div>
+						))}
+					</MapContainer>
+				)
+			}
 		</>
 	)
 }

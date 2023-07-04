@@ -115,26 +115,33 @@ const NearByBusStop = ({ city }) => {
 	return (
 		<>
 			<Navbar />
-			<main className="h-screen border border-blue-400 xl:flex">
+			<main className="h-screen border border-blue-400 lg:flex">
 				{/* 地圖區塊 */}
-				<div className="h-3/5 md:h-">
+				<div className="h-3/5 
+								lg:h-[42rem] lg:w-2/3">
 					<NearByMap className="w-auto"
 						finalNearbyStops={finalNearbyStops}
-						location={location} />
+						location={location}
+						userLat={userLat}
+						userLon={userLon} />
 				</div>
 
 				{/* 站牌資訊 */}
-				<div className="h-2/5 px-5 pt-5 bg-white overflow-y-auto">
+				<div className="h-2/5 px-5 pt-5 bg-white overflow-y-auto
+								lg:w-1/3 lg:h-[42rem] lg:px-10 lg:pt-8">
 					<div className="flex text-nav-dark justify-between">
-						<h1 className="text-lg font-medium">附近公車站牌
-							<span className="px-1.5 text-xs font-light text-slate-400">300m內</span>
+						<h1 className="text-lg font-medium lg:text-2xl">
+							附近公車站牌
+							<span className="px-1.5 text-xs font-light text-slate-400 lg:text-sm">
+								300m內
+							</span>
 						</h1>
 						<button onClick={handleRefresh}>
 							<IoReload size={18} className="text-slate-400" />
 						</button>
 					</div>
 
-					<ul className="px-2 py-3 divide-y divide-slate-200">
+					<ul className="px-2 py-3 divide-y divide-slate-200 lg:px-0">
 						{finalNearbyStops.map((stop) => (
 							<li className="flex justify-between py-2 align-middle"
 								key={stop.StopName}>
@@ -151,7 +158,6 @@ const NearByBusStop = ({ city }) => {
 								</div>
 							</li>
 						))}
-
 					</ul>
 				</div>
 			</main>

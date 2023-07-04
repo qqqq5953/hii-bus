@@ -1,13 +1,15 @@
 import { IoCode, IoHeart, IoArrowBackCircleOutline } from "react-icons/io5";
-
+import { useNavigate } from "react-router-dom";
 
 const BusInformation = ({ routeName, from, to, getButtonClassName, addToFavorites }) => {
+	const navigate = useNavigate();
+
 	return (
 		<>
 			<div className="flex justify-between items-center">
 				<div className="px-2 py-2">
 					<div className="flex">
-						<button>
+						<button onClick={() => navigate(-1)}>
 							<IoArrowBackCircleOutline className="hidden text-slate-300 md:block md:mr-3" size={26} />
 						</button>
 						<div className="font-bold text-2xl text-nav-dark">
