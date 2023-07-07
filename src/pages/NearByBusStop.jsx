@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { IoLocationSharp, IoReload } from "react-icons/io5";
 import useGeolocation from "../util/useGeolocation";
 import getAuthorizationHeader from "../util/getAuthorizationHeader";
 import cityList from "../data/cityList";
 import NearByMap from "../util/NearByMap";
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
-import { IoLocationSharp, IoReload } from "react-icons/io5";
+import Footer from "../components/Footer";
 
 
 const NearByBusStop = ({ city }) => {
@@ -114,53 +115,57 @@ const NearByBusStop = ({ city }) => {
 
 	return (
 		<>
-			<Navbar />
-			<main className="h-screen border border-blue-400 lg:flex">
-				{/* 地圖區塊 */}
-				<div className="h-3/5 
-								lg:h-[42rem] lg:w-2/3">
-					<NearByMap className="w-auto"
-						finalNearbyStops={finalNearbyStops}
-						location={location}
-						userLat={userLat}
-						userLon={userLon} />
-				</div>
-
-				{/* 站牌資訊 */}
-				<div className="h-2/5 px-5 pt-5 bg-white overflow-y-auto
-								lg:w-1/3 lg:h-[42rem] lg:px-10 lg:pt-8">
-					<div className="flex text-nav-dark justify-between">
-						<h1 className="text-lg font-medium lg:text-2xl">
-							附近公車站牌
-							<span className="px-1.5 text-xs font-light text-slate-400 lg:text-sm">
-								300m內
-							</span>
-						</h1>
-						<button onClick={handleRefresh}>
-							<IoReload size={18} className="text-slate-400" />
-						</button>
+			<div className="h-screen">
+				<Navbar />
+				<main className="h-full lg:flex">
+					{/* 地圖區塊 */}
+					<div className="h-3/5 md:h-1/2
+								lg:min-h-screen lg:w-2/3">
+						<NearByMap className="w-auto"
+							finalNearbyStops={finalNearbyStops}
+							location={location}
+							userLat={userLat}
+							userLon={userLon} />
 					</div>
 
-					<ul className="px-2 py-3 divide-y divide-slate-200 lg:px-0">
-						{finalNearbyStops.map((stop) => (
-							<li className="flex justify-between py-2 align-middle"
-								key={stop.StopName}>
-								<div className="text-searchbar-dark">
-									<p className="font-medium leading-6">{stop.StopName}</p>
-									<p className="text-sm ">?條路線</p>
-								</div>
-								<div>
-									<Button backgroundColor="#F8F8FB" fontSize="15px"
-										fontColor="#8C90AB">
-										<IoLocationSharp size={14} />
-										{Math.floor(stop.Distance * 100)}0m
-									</Button>
-								</div>
-							</li>
-						))}
-					</ul>
-				</div>
-			</main>
+					{/* 站牌資訊 */}
+					<div className="h-2/5 px-5 pt-5 bg-white overflow-y-auto
+								md:h-1/2 md:px-12 md:pt-8 md:overflow-y-auto
+								lg:w-1/3 lg:min-h-screen lg:px-10 lg:pt-8">
+						<div className="flex text-nav-dark justify-between">
+							<h1 className="text-lg font-medium md:text-xl lg:text-2xl">
+								附近公車站牌
+								<span className="px-1.5 text-xs font-light text-slate-400 lg:text-sm">
+									300m內
+								</span>
+							</h1>
+							<button onClick={handleRefresh}>
+								<IoReload size={18} className="text-slate-400 md:mr-4 lg:mr-0" />
+							</button>
+						</div>
+
+						<ul className="px-2 py-3 divide-y divide-slate-200 lg:px-0">
+							{finalNearbyStops.map((stop) => (
+								<li className="flex justify-between py-2 align-middle"
+									key={stop.StopName}>
+									<div className="text-searchbar-dark">
+										<p className="font-medium leading-6">{stop.StopName}</p>
+										<p className="text-sm ">?條路線</p>
+									</div>
+									<div>
+										<Button backgroundColor="#F8F8FB" fontSize="15px"
+											fontColor="#8C90AB">
+											<IoLocationSharp size={14} />
+											{Math.floor(stop.Distance * 100)}0m
+										</Button>
+									</div>
+								</li>
+							))}
+						</ul>
+					</div>
+				</main>
+				<Footer />
+			</div>
 		</>
 	)
 }

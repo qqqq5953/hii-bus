@@ -17,9 +17,11 @@ const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setC
 	return (
 		<>
 			<div className="flex flex-col h-screen">
-				<nav className="bg-nav-dark h-14 flex justify-between items-center md:h-16">
+				{/* Navbar */}
+				<nav className="z-50 bg-nav-dark h-14 flex justify-between items-center
+								md:h-16">
 					<Link to="/">
-						<img src={LogoWhite} alt="hi bus nav logo" className="mx-5" />
+						<img src={LogoWhite} alt="hi bus nav logo" className="mx-8 w-24" />
 					</Link>
 					<div className="flex
                md:w-2/5 justify-end mr-2
@@ -40,20 +42,21 @@ const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setC
 
 				<main>
 					<div className="grid justify-items-center mt-14 gap-3 md:gap-5 lg:gap-7">
-						<img src={MLogo} alt="hi bus logo" className="lg:hidden" />
-						<img src={DLogo} alt="hi bus logo" className="hidden md:hidden lg:block mt-7" />
-						<h1 className="font-chinese">今天想搭乘哪輛公車呢？</h1>
+						<img src={MLogo} alt="hi bus logo" className="z-30 lg:hidden" />
+						<img src={DLogo} alt="hi bus logo" className="z-30 hidden md:hidden lg:block mt-7" />
+						<h1 className="z-30 font-chinese">今天想搭乘哪輛公車呢？</h1>
 					</div>
 
 
-					<SearchBar routeNumber={routeNumber}
+					<SearchBar
+						routeNumber={routeNumber}
 						setRouteNumber={setRouteNumber}
 						routeName={routeName}
 						setRouteName={setRouteName}
 						city={city}
 						setCity={setCity} />
 
-
+					{/* 背景圖 */}
 					<div>
 						<img src={MBackground} className="absolute bottom-24 w-full object-cover block md:hidden" alt="background" />
 						<img src={TBackground} className="absolute bottom-32 w-full object-cover hidden md:block lg:hidden" alt="background" />

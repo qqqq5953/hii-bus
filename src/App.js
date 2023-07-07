@@ -17,34 +17,41 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Home
-          routeNumber={routeNumber}
-          setRouteNumber={setRouteNumber}
-          routeName={routeName}
-          setRouteName={setRouteName}
-          city={city}
-          setCity={setCity} />}>
+        <Route path="/"
+          element={<Home
+            routeNumber={routeNumber}
+            setRouteNumber={setRouteNumber}
+            routeName={routeName}
+            setRouteName={setRouteName}
+            setCity={setCity}
+            city={city} />}>
         </Route>
 
-        <Route path="/myfavorite" element={<MyFavorite
-          favorites={favorites}
-          setFavorites={setFavorites} />}></Route>
+        <Route path="/myfavorite"
+          element={<MyFavorite
+            favorites={favorites}
+            setFavorites={setFavorites} />}></Route>
 
-        <Route path="/:cityselect/:routeName" element={<BusStatusPage
-          routeNumber={routeNumber}
-          city={city}
-          stopData={stopData}
-          setStopData={setStopData}
-          favorites={favorites}
-          setFavorites={setFavorites} />} >
+        <Route path="/:cityselect/:routeName"
+          element={<BusStatusPage
+            routeNumber={routeNumber}
+            setRouteNumber={setRouteNumber}
+            city={city}
+            setCity={setCity}
+            stopData={stopData}
+            setStopData={setStopData}
+            favorites={favorites}
+            setFavorites={setFavorites} />} >
         </Route>
 
-        <Route path="nearbystop" element={<NearByBusStop
-          city={city}
-          routeName={routeName} />}>
+        <Route path="nearbystop"
+          element={<NearByBusStop
+            city={city}
+            routeName={routeName} />}>
         </Route>
 
-        <Route path="*" element={<NotFound />}></Route>
+        <Route path="*"
+          element={<NotFound />}></Route>
       </Routes>
     </div>
   );
