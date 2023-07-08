@@ -45,7 +45,7 @@ const BusMap = ({ routeName, finalRoute, stopData }) => {
 			{centerCoords[0] !== undefined
 				&& centerCoords[1] !== undefined
 				&& (
-					<MapContainer className="block object-cover md:h-full lg:h-full"
+					<MapContainer className="min-h-full"
 						center={centerCoords} zoom={14} >
 						<TileLayer
 							attribution='Tiles &copy; Esri &mdash; '
@@ -54,7 +54,6 @@ const BusMap = ({ routeName, finalRoute, stopData }) => {
 
 						{markers?.map((marker) => (
 							<div key={marker.geocode}>
-								{/* <RoutingMachine waypoints={marker.geocode} /> */}
 								<Marker position={marker.geocode} icon={customIcon}>
 									<Popup><h2>{marker.popUp}</h2></Popup>
 								</Marker>

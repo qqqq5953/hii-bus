@@ -69,7 +69,10 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 						</ul>
 					</div>
 				</div>
-				<Footer />
+
+				<div className="fixed w-full z-10 bottom-0">
+					<Footer />
+				</div>
 			</div>
 		</>
 	)

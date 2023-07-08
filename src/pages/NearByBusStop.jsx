@@ -150,7 +150,7 @@ const NearByBusStop = ({ city }) => {
 									key={stop.StopName}>
 									<div className="text-searchbar-dark">
 										<p className="font-medium leading-6">{stop.StopName}</p>
-										<p className="text-sm ">?條路線</p>
+										<p className="text-sm ">?條路線（待處理）</p>
 									</div>
 									<div>
 										<Button backgroundColor="#F8F8FB" fontSize="15px"

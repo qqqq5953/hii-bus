@@ -16,7 +16,7 @@ const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setC
 
 	return (
 		<>
-			<div className="flex flex-col h-screen">
+			<div className="h-screen">
 				{/* Navbar */}
 				<nav className="z-50 bg-nav-dark h-14 flex justify-between items-center
 								md:h-16">
@@ -65,7 +65,9 @@ const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setC
 					</div>
 				</main>
 
-				<Footer />
+				<div className="fixed w-full z-10 bottom-0">
+					<Footer />
+				</div>
 			</div>
 		</>
 	)

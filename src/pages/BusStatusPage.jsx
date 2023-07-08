@@ -1,22 +1,28 @@
 import { IoChevronBack, IoBus } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import BusMap from "../util/BusMap";
+import axios from "axios";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import BusStopStatus from "../components/BusStopStatus";
 import BusInformation from "../components/BusInformation";
+import Loading from "../components/Loading";
 import getAuthorizationHeader from "../util/getAuthorizationHeader";
+import BusMap from "../util/BusMap";
 import cityList from "../data/cityList";
-import axios from "axios";
 
 
 const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites }) => {
 	const [routeDirection, setRouteDirection] = useState("");
 	const [finalRoute, setFinalRoute] = useState({});
+	const [isLoading, setIsLoading] = useState(true);
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
 	const navigate = useNavigate();
 	const { routeName } = useParams();
+	const [isOneDirection, setIsOneDirection] = useState({
+		leftBtn: false,
+		rightBtn: false
+	})
 
 
 	// 把 city 陣列轉成中英對照的物件型態 ex. {"台北市" : "Taipei"}
@@ -139,9 +145,26 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		// console.log('innerFinalRoute', innerFinalRoute);
 
 		// 畫面初始要跑預設:去程路線
+		console.log('innerFinalRoute', innerFinalRoute);
 		const defaultDirection = `${routeName}_0`;
 		setRouteDirection(defaultDirection);
 		setFinalRoute(innerFinalRoute);
+
+		if (!innerFinalRoute[`${routeName}_0`]) {
+			setIsOneDirection({
+				...isOneDirection,
+				leftBtn: true
+			})
+		}
+		if (!innerFinalRoute[`${routeName}_1`]) {
+			setIsOneDirection({
+				...isOneDirection,
+				rightBtn: true
+			})
+		}
+
+		// setIsOneDirection
+
 
 		const defaultStopsData = innerFinalRoute[defaultDirection];
 		// 當輸入無效路線號碼時
@@ -150,6 +173,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		const toStopName = defaultStopsData[0].StopName.Zh_tw;
 		setFrom(fromStopName);
 		setTo(toStopName);
+		setIsLoading(false);
 	};
 
 	const [from, setFrom] = useState("");
@@ -159,19 +183,25 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		getAllRoutes();
 	}, [routeName]);
 
-	const defaultButtonStyle = "flex justify-center items-center";
+	const defaultButtonStyle = "flex justify-center items-center p-2";
 	const [directionFromStyle, setDirectionFromStyle] = useState(defaultButtonStyle);
 	const [directionToStyle, setDirectionToStyle] = useState(defaultButtonStyle);
 
 	const selectStyle = "text-white bg-gradient-start";
 	const unSelectStyle = "text-gradient-start bg-white";
 
+
+
 	// 當觸發 direction 改變時
 	useEffect(() => {
 		if (!routeDirection) return;
 		// 當路線只有單一方向或為環狀路線時
 		const newStopData = finalRoute[routeDirection];
-		if (newStopData === undefined) return;
+		if (newStopData === undefined) {
+			console.log("stopData 判斷", stopData);
+			console.log("路線單向");
+			return;
+		}
 		setStopData(newStopData); // 帶入搜尋到的公車路線
 		const direction = routeDirection.split("_")[1];
 		// console.log('direction', direction);
@@ -232,74 +262,81 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 	const toggleMap = () => {
 		setShowMap(!showMap);
 	}
-	console.log("showMap", showMap);
+	// console.log("showMap", showMap);
 
 	return (
 		<>
-			<div className="h-auto lg:h-screen lg:flex lg:flex-col">
-				<Navbar className="hidden md:block" />
-				<div className="bg-white w-full h-auto lg:flex lg:h-full lg:p-5 lg:bg-gray-100">
-					{/* 地圖來囉 */}
-					<div className={`${showMap ? "block" : "hidden"} h-[200px] w-full
-						md:block md:h-[400px] md:w-full md:sticky 
-						lg:w-11/12 lg:h-auto`}>
-						<BusMap
-							routeName={routeName}
-							finalRoute={finalRoute}
-							stopData={stopData} />
-					</div>
+			{/* 判斷是否 Loading */}
+			{isLoading ?
+				(<div>
+					<Loading />
+				</div>) : (
+					<div className="h-screen lg:h-screen lg:flex lg:flex-col">
+						<Navbar />
+						<div className="relative bg-white w-full h-auto 
+										md:static
+										lg:flex lg:h-full lg:p-5 lg:bg-gray-100">
+							{/* 地圖來囉 */}
+							<div className="absolute w-full h-[300px] top-0 -z-10
+						md:block md:h-[400px] md:w-full md:sticky md:z-10
+						lg:w-11/12 lg:h-[650px]">
+								<BusMap
+									routeName={routeName}
+									finalRoute={finalRoute}
+									stopData={stopData} />
+							</div>
 
 
-					{/* md 以上不顯示返回及顯示地圖鍵 地圖直接顯示 */}
-					<div className="p-4 
-				             md:px-10 
-				             lg:w-1/2 lg:h-[500px] lg:bg-white lg:ml-3 lg:px-5 rounded-lg overflow-y-auto xl:h-[650px]">
-						<div className="flex box-border justify-between md:hidden">
-							<button type="button" onClick={() =>
-								navigate(-1)
-							}>
-								<IoChevronBack className="text-slate-300" size={22} />
-							</button>
-							<button type="button" className="w-24 h-10 border border-slate-300 rounded-full text-sm text-slate-400 tracking-wider"
-								onClick={toggleMap}>
-								展開地圖
-							</button>
-						</div>
+							{/* md 以上不顯示返回及顯示地圖鍵 地圖直接顯示 */}
+							<div className={`${showMap ? "absolute top-[300px]" : "absolute top-0"} 
+				            p-4 bg-white w-full
+							 md:px-10 md:static
+				             lg:w-1/2 lg:h-[500px] lg:bg-white lg:ml-3 lg:px-5 rounded-lg overflow-y-auto xl:h-[650px]`}>
+								<div className="flex justify-between md:hidden">
+									<button type="button" onClick={() =>
+										navigate(-1)
+									}>
+										<IoChevronBack className="text-slate-300" size={22} />
+									</button>
+									<button type="button" className="w-24 h-10 border border-slate-300 rounded-full text-sm text-slate-400 tracking-wider"
+										onClick={toggleMap}>
+										展開地圖
+									</button>
 
-
-						{/* md 以上 路線名稱、起迄站那塊 */}
-						<main className="md:px-2 h-auto">
-							<BusInformation
-								routeName={routeName}
-								from={from}
-								to={to}
-								getButtonClassName={getButtonClassName}
-								addToFavorites={addToFavorites} />
-
-
-							{/* 切換去回程按鈕 路線為環狀或單向判斷？？？ */}
-							{(stopData[0]?.EtaDirection === 0 ||
-								stopData[0]?.EtaDirection === 1) && (
-									<div className="grid grid-cols-2 divide-x divide-transparent h-10 border border-gradient-start rounded-lg overflow-hidden">
-										<button className={directionFromStyle}
-											onClick={() => setRouteDirection(`${routeName}_0`)}>
-											<p className="whitespace-pre">往  </p>
-											<span className="font-bold tracking-wide">{from}</span>
-										</button>
-										<button className={directionToStyle}
-											onClick={() => setRouteDirection(`${routeName}_1`)}>
-											<p className="whitespace-pre">往  </p>
-											<span className="font-bold tracking-wide">{to}</span>
-										</button>
-									</div>
-								)}
+								</div>
 
 
 
+								{/* md 以上 路線名稱、起迄站那塊 */}
+								<main className="md:px-2 h-auto">
+									<BusInformation
+										routeName={routeName}
+										from={from}
+										to={to}
+										getButtonClassName={getButtonClassName}
+										addToFavorites={addToFavorites} />
 
-							{/* 公車到站狀態 */}
-							<ul className="px-2 py-3 divide-y divide-slate-200 md:py-6 lg:py-4">
-								{/* <li className="flex justify-between items-center py-3 h-auto first:pt-0 last:pb-0 relative">
+
+									{/* 切換去回程按鈕 路線為環狀或單向判斷？？？ */}
+									{stopData[0]?.EtaDirection !== undefined && (
+										<div className={`grid divide-x divide-transparent border border-gradient-start rounded-lg overflow-hidden ${isOneDirection.leftBtn || isOneDirection.rightBtn ? 'grid-cols-1' : 'grid-cols-2'}`}>
+											{!isOneDirection.leftBtn && <button className={directionFromStyle}
+												onClick={() => setRouteDirection(`${routeName}_0`)}>
+												<p className="whitespace-pre">往  </p>
+												<span className="font-bold tracking-wide">{from}</span>
+											</button>}
+											{!isOneDirection.rightBtn && <button className={directionToStyle}
+												onClick={() => setRouteDirection(`${routeName}_1`)}>
+												<p className="whitespace-pre">往  </p>
+												<span className="font-bold tracking-wide">{to}</span>
+											</button>}
+										</div>
+									)}
+
+
+									{/* 公車到站狀態 */}
+									<ul className="px-2 py-3 divide-y divide-slate-200 md:py-6 lg:py-4">
+										{/* <li className="flex justify-between items-center py-3 h-auto first:pt-0 last:pb-0 relative">
 										<div className="flex items-center">
 											<Button backgroundColor="#FF6464"
 												fontSize='12px'
@@ -320,15 +357,20 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 										</div>
 									</li> */}
 
-								<BusStopStatus stopData={stopData} />
-							</ul>
-						</main>
+										<BusStopStatus stopData={stopData} />
+									</ul>
+								</main>
+
+							</div>
+
+						</div>
+
+						<div className="fixed w-full z-10 bottom-0">
+							<Footer />
+						</div>
+
 					</div>
-
-				</div>
-
-				<Footer />
-			</div>
+				)}
 		</>
 	)
 }
