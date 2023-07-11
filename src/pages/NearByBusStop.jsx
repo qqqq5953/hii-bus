@@ -8,10 +8,12 @@ import NearByMap from "../util/NearByMap";
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
+import Loading from "../components/Loading";
 
 
 const NearByBusStop = ({ city }) => {
 	const [stopInfo, setStopInfo] = useState({});
+	const [isLoading, setIsLoading] = useState(true);
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
 	// 把 city 陣列轉成中英對照的物件型態 ex. {"台北市" : "Taipei"}
 	const CityObj = cityList.reduce((acc, item) => {
@@ -43,6 +45,7 @@ const NearByBusStop = ({ city }) => {
 			})
 		});
 		setStopInfo(result);
+		setIsLoading(false);
 	}
 
 	// 計算兩個經緯度之間的距離（使用 Haversine 公式）
@@ -115,57 +118,62 @@ const NearByBusStop = ({ city }) => {
 
 	return (
 		<>
-			<div className="h-screen">
-				<Navbar />
-				<main className="h-full lg:flex">
-					{/* 地圖區塊 */}
-					<div className="h-3/5 md:h-1/2
+			{isLoading ? (<div>
+				<Loading />
+			</div>) : (
+				<div className="h-screen">
+					<Navbar />
+					<main className="h-full lg:flex">
+						{/* 地圖區塊 */}
+						<div className="h-3/5 md:h-1/2
 								lg:min-h-screen lg:w-2/3">
-						<NearByMap className="w-auto"
-							finalNearbyStops={finalNearbyStops}
-							location={location}
-							userLat={userLat}
-							userLon={userLon} />
-					</div>
-
-					{/* 站牌資訊 */}
-					<div className="h-2/5 px-5 pt-5 bg-white overflow-y-auto
-								md:h-1/2 md:px-12 md:pt-8 md:overflow-y-auto
-								lg:w-1/3 lg:min-h-screen lg:px-10 lg:pt-8">
-						<div className="flex text-nav-dark justify-between">
-							<h1 className="text-lg font-medium md:text-xl lg:text-2xl">
-								附近公車站牌
-								<span className="px-1.5 text-xs font-light text-slate-400 lg:text-sm">
-									300m內
-								</span>
-							</h1>
-							<button onClick={handleRefresh}>
-								<IoReload size={18} className="text-slate-400 md:mr-4 lg:mr-0" />
-							</button>
+							<NearByMap className="w-auto"
+								finalNearbyStops={finalNearbyStops}
+								location={location}
+								userLat={userLat}
+								userLon={userLon} />
 						</div>
 
-						<ul className="px-2 py-3 divide-y divide-slate-200 lg:px-0">
-							{finalNearbyStops.map((stop) => (
-								<li className="flex justify-between py-2 align-middle"
-									key={stop.StopName}>
-									<div className="text-searchbar-dark">
-										<p className="font-medium leading-6">{stop.StopName}</p>
-										<p className="text-sm ">?條路線（待處理）</p>
-									</div>
-									<div>
-										<Button backgroundColor="#F8F8FB" fontSize="15px"
-											fontColor="#8C90AB">
-											<IoLocationSharp size={14} />
-											{Math.floor(stop.Distance * 100)}0m
-										</Button>
-									</div>
-								</li>
-							))}
-						</ul>
-					</div>
-				</main>
-				<Footer />
-			</div>
+						{/* 站牌資訊 */}
+						<div className="h-2/5 px-5 pt-5 bg-white overflow-y-auto
+								md:h-1/2 md:px-12 md:pt-8 md:overflow-y-auto
+								lg:w-1/3 lg:min-h-screen lg:px-10 lg:pt-8">
+							<div className="flex text-nav-dark justify-between">
+								<h1 className="text-lg font-medium md:text-xl lg:text-2xl">
+									附近公車站牌
+									<span className="px-1.5 text-xs font-light text-slate-400 lg:text-sm">
+										300m內
+									</span>
+								</h1>
+								<button onClick={handleRefresh}>
+									<IoReload size={18} className="text-slate-400 md:mr-4 lg:mr-0" />
+								</button>
+							</div>
+
+							<ul className="px-2 py-3 divide-y divide-slate-200 lg:px-0">
+								{finalNearbyStops.map((stop) => (
+									<li className="flex justify-between py-2 align-middle"
+										key={stop.StopName}>
+										<div className="text-searchbar-dark">
+											<p className="font-medium leading-6">{stop.StopName}</p>
+											<p className="text-sm ">?條路線（待處理）</p>
+										</div>
+										<div>
+											<Button backgroundColor="#F8F8FB" fontSize="15px"
+												fontColor="#8C90AB">
+												<IoLocationSharp size={14} />
+												{Math.floor(stop.Distance * 100)}0m
+											</Button>
+										</div>
+									</li>
+								))}
+							</ul>
+						</div>
+					</main>
+					<Footer />
+				</div>
+			)}
+
 		</>
 	)
 }

@@ -8,7 +8,7 @@ const Navbar = () => {
 	return (
 		<>
 			<nav>
-				<div className="bg-nav-dark h-14 flex items-center justify-between
+				<div className="flex z-50 bg-nav-dark h-14 items-center justify-between
 								 md:h-1/12">
 					{/* Logo */}
 					<Link to="/">
@@ -27,7 +27,7 @@ const Navbar = () => {
 						<Link className="flex text-white hover:text-yellow-400"
 							id="myFavorite"
 							to="/myfavorite">
-							<IoHeart size={22} />
+							<IoHeart size={22} className="md:mr-1" />
 							<span className="hidden md:block font-light">我的收藏</span>
 						</Link>
 					</div>

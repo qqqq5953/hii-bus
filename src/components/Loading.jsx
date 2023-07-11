@@ -15,7 +15,7 @@ const Loading = () => {
 
 				<div className="absolute text-2xl text-searchbar-dark top-1/2 tracking-wide
 								md:text-4xl lg:text-3xl">
-					資料載入中...
+					公車行駛中，請稍候...
 				</div>
 			</div>
 		</>

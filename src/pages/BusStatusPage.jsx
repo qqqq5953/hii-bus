@@ -1,4 +1,4 @@
-import { IoChevronBack, IoBus } from "react-icons/io5";
+import { IoChevronBack } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -16,6 +16,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 	const [routeDirection, setRouteDirection] = useState("");
 	const [finalRoute, setFinalRoute] = useState({});
 	const [isLoading, setIsLoading] = useState(true);
+	const [plateNumb, setPlateNum] = useState([]);
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
 	const navigate = useNavigate();
 	const { routeName } = useParams();
@@ -52,10 +53,19 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 				"authorization": "Bearer " + accessToken,
 			},
 		});
-		const result = await Promise.all([eta, stop]);
+
+		const plateNumb = axios.get(`${api}RealTimeNearStop/City/${CityObj[city]}/${routeName
+			}?%24select=PlateNumb%2C%20RouteUID%2C%20RouteName%2CDirection%2CStopUID%2CStopSequence&%24format=JSON`, {
+			headers: {
+				"authorization": "Bearer " + accessToken,
+			},
+		});
+
+		const result = await Promise.all([eta, stop, plateNumb]);
 		console.log('result', result);
 		const etaRes = result[0].data;
 		const stopRes = result[1].data;
+		const plateNumbRes = result[2].data;
 		// 當輸入無效路線號碼時
 		if (etaRes.length === 0 || stopRes.length === 0) {
 			navigate("/NotFound");
@@ -63,6 +73,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		}
 		// console.log('etaRes', etaRes);
 		// console.log('stopRes', stopRes);
+		// console.log('plateNumbRes', plateNumbRes);
 
 
 		// #1 取出需要的欄位
@@ -74,7 +85,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 				StopStatus: eta.StopStatus,
 			}
 		});
-		console.log('etas', etas);
+		// console.log('etas', etas);
 
 		const stops = stopRes.map((item) => {
 			return {
@@ -84,6 +95,15 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 			}
 		});
 		// console.log('stops', stops);
+
+		const plateNumbs = plateNumbRes.map((plate) => {
+			return {
+				PlateNumb: plate.PlateNumb,
+				Key: `${plate.StopUID}_${plate.Direction}`
+			}
+		});
+		setPlateNum(plateNumbs);
+		// console.log("plateNumbs", plateNumbs);
 
 
 		// #2 forEach 分別取出物件中的 key 及 value 並組裝成 {StopUID:EstimateTime} 的資料型態
@@ -112,13 +132,22 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		}, {});
 
 		// 取出路線
-		const routeObj = {}
+		const routeObj = {};
 		stops.forEach(item => {
 			const { key, stops } = item  // 解構取值
 			// const key = `${subRouteName}_${direction}`
 			routeObj[key] = stops
-		})
+		});
 		// console.log('routeObj', routeObj);
+
+		// 取出車牌號碼
+		// const stopPlateNumbObj = {};
+		// plateNumbs.forEach(plate => {
+		// 	const { PlateNumb, StopUID } = plate;
+		// 	stopPlateNumbObj[StopUID] = PlateNumb;
+		// 	setPlateNum(stopPlateNumbObj);
+		// });
+		// console.log("stopPlateNumbObj", stopPlateNumbObj);
 
 
 		// #3 組合資料（上面的 routeObj 還缺 EstimateTime 資料）
@@ -145,7 +174,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		// console.log('innerFinalRoute', innerFinalRoute);
 
 		// 畫面初始要跑預設:去程路線
-		console.log('innerFinalRoute', innerFinalRoute);
 		const defaultDirection = `${routeName}_0`;
 		setRouteDirection(defaultDirection);
 		setFinalRoute(innerFinalRoute);
@@ -162,11 +190,8 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 				rightBtn: true
 			})
 		}
-
-		// setIsOneDirection
-
-
 		const defaultStopsData = innerFinalRoute[defaultDirection];
+
 		// 當輸入無效路線號碼時
 		if (defaultStopsData === undefined) return;
 		const fromStopName = defaultStopsData[(defaultStopsData.length) - 1].StopName.Zh_tw;
@@ -191,15 +216,12 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 	const unSelectStyle = "text-gradient-start bg-white";
 
 
-
 	// 當觸發 direction 改變時
 	useEffect(() => {
 		if (!routeDirection) return;
 		// 當路線只有單一方向或為環狀路線時
 		const newStopData = finalRoute[routeDirection];
 		if (newStopData === undefined) {
-			console.log("stopData 判斷", stopData);
-			console.log("路線單向");
 			return;
 		}
 		setStopData(newStopData); // 帶入搜尋到的公車路線
@@ -209,19 +231,17 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 
 
 		if (direction === "0") {
-			console.log('去程');
+			// console.log('去程');
 			setDirectionFromStyle(defaultButtonStyle + " " + selectStyle);
 			setDirectionToStyle(defaultButtonStyle + " " + unSelectStyle);
 		} else {
-			console.log('回程');
+			// console.log('回程');
 			setDirectionFromStyle(defaultButtonStyle + " " + unSelectStyle);
 			setDirectionToStyle(defaultButtonStyle + " " + selectStyle);
 		}
 		// console.log('directionFromStyle', directionFromStyle);
 		// console.log('directionToStyle', directionToStyle);
 	}, [routeDirection]);
-
-	console.log('StopData', stopData);
 
 
 	// 切換愛心按鈕顏色
@@ -264,6 +284,9 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 	}
 	// console.log("showMap", showMap);
 
+	// console.log('StopData', stopData);
+	// console.log("plateNumb", plateNumb);
+
 	return (
 		<>
 			{/* 判斷是否 Loading */}
@@ -289,9 +312,10 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 
 							{/* md 以上不顯示返回及顯示地圖鍵 地圖直接顯示 */}
 							<div className={`${showMap ? "absolute top-[300px]" : "absolute top-0"} 
-				            p-4 bg-white w-full
+				            p-4 bg-white w-full overflow-y-scroll rounded-lg 
 							 md:px-10 md:static
-				             lg:w-1/2 lg:h-[500px] lg:bg-white lg:ml-3 lg:px-5 rounded-lg overflow-y-auto xl:h-[650px]`}>
+				             lg:w-1/2 lg:h-[500px] lg:bg-white lg:ml-3 lg:px-5  
+							 xl:h-[650px]`}>
 								<div className="flex justify-between md:hidden">
 									<button type="button" onClick={() =>
 										navigate(-1)
@@ -319,7 +343,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 
 									{/* 切換去回程按鈕 路線為環狀或單向判斷？？？ */}
 									{stopData[0]?.EtaDirection !== undefined && (
-										<div className={`grid divide-x divide-transparent border border-gradient-start rounded-lg overflow-hidden ${isOneDirection.leftBtn || isOneDirection.rightBtn ? 'grid-cols-1' : 'grid-cols-2'}`}>
+										<div className={`grid divide-x divide-transparent border border-gradient-start rounded-lg overflow-hidden ${isOneDirection.leftBtn || isOneDirection.rightBtn ? "grid-cols-1" : "grid-cols-2"}`}>
 											{!isOneDirection.leftBtn && <button className={directionFromStyle}
 												onClick={() => setRouteDirection(`${routeName}_0`)}>
 												<p className="whitespace-pre">往  </p>
@@ -336,28 +360,8 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 
 									{/* 公車到站狀態 */}
 									<ul className="px-2 py-3 divide-y divide-slate-200 md:py-6 lg:py-4">
-										{/* <li className="flex justify-between items-center py-3 h-auto first:pt-0 last:pb-0 relative">
-										<div className="flex items-center">
-											<Button backgroundColor="#FF6464"
-												fontSize='12px'
-												fontColor='#FFF'>
-												進站中
-											</Button >
-											<p className="text-nav-dark mx-3">老松國小</p>
-										</div>
-										<div className="flex w-20 h-10 bg-slate-100 rounded-full text-sm font-light text-slate-400 items-center justify-center mr-1 lg:mx-3">
-											<IoBus className="text-gradient-start mx-0.5" />
-											<p>712-FW</p>
-										</div>
-
-										<div className="absolute -right-3 w-0.5 h-10 bg-slate-200 mt-8 
-								md:-right-5 md:mt-6 md:h-10 lg:-right-2">
-											<div className="relative h-2 w-2 right-[3px] 
-					after:content[''] rounded-full border-[2px] border-slate-200 bg-white"/>
-										</div>
-									</li> */}
-
-										<BusStopStatus stopData={stopData} />
+										<BusStopStatus stopData={stopData}
+											plateNumb={plateNumb} />
 									</ul>
 								</main>
 

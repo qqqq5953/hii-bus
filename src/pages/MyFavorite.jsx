@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { IoHeart, IoArrowForwardOutline } from "react-icons/io5";
+import { IoHeart, IoArrowForwardOutline, IoSearch, IoLocationSharp } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 
 const MyFavorite = ({ favorites, setFavorites }) => {
@@ -30,7 +31,8 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 
 	return (
 		<>
-			<div className="flex flex-col h-screen">
+			<div className="flex flex-col h-screen bg-white
+							md:bg-opacity-0">
 				<Navbar />
 
 				<div className="justify-center flex flex-cols-3 items-center 
@@ -46,7 +48,23 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 								<p className="w-1/3 text-center">移除收藏</p>
 							</li>
 
-							{/*我的收藏路線列表 */}
+							{favorites.length === 0 &&
+								(<div className="text-searchbar-dark font-bold">
+									<p className="pt-8 pb-4">
+										Oh，你還沒收藏最愛路線，你可以：
+									</p>
+									<div className="flex justify-center ">
+										<Link className="flex px-1.5 items-center" to="/">
+											<IoSearch className="mx-1 text-gradient-start" />
+											搜尋公車路線
+										</Link>
+										<Link className="flex px-1.5 items-center" to="/nearbystop">
+											<IoLocationSharp className="mx-1 text-yellow-400" />
+											查看附近站牌
+										</Link>
+									</div>
+								</div>)}
+
 							{favorites.map((item) => (
 								<li className="text-center hover:bg-gray-100 flex px-2 py-4"
 									key={item.id}>
