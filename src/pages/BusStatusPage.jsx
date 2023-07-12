@@ -140,15 +140,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		});
 		// console.log('routeObj', routeObj);
 
-		// 取出車牌號碼
-		// const stopPlateNumbObj = {};
-		// plateNumbs.forEach(plate => {
-		// 	const { PlateNumb, StopUID } = plate;
-		// 	stopPlateNumbObj[StopUID] = PlateNumb;
-		// 	setPlateNum(stopPlateNumbObj);
-		// });
-		// console.log("stopPlateNumbObj", stopPlateNumbObj);
-
 
 		// #3 組合資料（上面的 routeObj 還缺 EstimateTime 資料）
 		// for...in (在 routeObj物件中自訂一個 routeName 的屬性)
@@ -254,7 +245,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		return "text-gray-300";
 	}
 
-	// console.log("isHighlighted", isHighlighted);
 
 	// 加入收藏功能
 	const addToFavorites = (item) => {

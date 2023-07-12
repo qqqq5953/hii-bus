@@ -7,12 +7,6 @@ import cityList from "../data/cityList";
 
 
 const SearchBar = ({ routeNumber, setRouteNumber, setRouteName, city, setCity }) => {
-	// const { routeNumber, setRouteNumber, handleCityValue, response, setRouteName } = useContext(DataContext);
-	// console.log('routeNumber', routeNumber);
-	// console.log('routeName', routeName);
-
-	// const [routeNumber, setRouteNumber] = useState(''); // 搜尋公車路線
-	// const [city, setCity] = useState('臺北市'); // choose city
 	const [response, setResponse] = useState([]); // 搜出來的路線資料
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
 	const pressUnit = ['紅', '綠', '橘', '藍', '棕', '黃', 'F', 'R', 'T', '幹線', '先導', '內科', '貓空', '市民', '南軟', '跳蛙', '夜間', '小'];
@@ -122,6 +116,13 @@ const SearchBar = ({ routeNumber, setRouteNumber, setRouteName, city, setCity })
 						))}
 					</ul>)
 				}
+
+				{/* 搜尋欄有字但查無結果時 */}
+				{routeNumber !== "" && (response.length) === 0 && (
+					<div className="flex px-4 py-4 items-center justify-center lg:py-6 lg:px-6">
+						<p className="text-nav-dark tracking-wide">查無符合的結果</p>
+					</div>
+				)}
 			</div>
 		</div>
 	</>
