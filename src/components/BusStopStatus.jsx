@@ -22,18 +22,6 @@ const BusStopStatus = ({ stopData, plateNumb }) => {
 	}, {});
 
 
-	const matchingPlates = [];
-	// 比對 stopUID 及 plateUID 兩物件是否有相符的屬性
-	Object.entries(plateObj).forEach(([plateKey, plateValue]) => {
-		if (stopObj.hasOwnProperty(plateKey)) {
-			const obj = {};
-			obj[plateKey] = plateValue;
-			matchingPlates.push(obj);
-		}
-	});
-
-	console.log("matchingPlates", matchingPlates);
-
 	console.log("stopObj", stopObj);
 	console.log("plateObj", plateObj);
 
@@ -85,10 +73,13 @@ const BusStopStatus = ({ stopData, plateNumb }) => {
 								</p>
 
 								{/* 即將到站的公車車牌 */}
-								<div className="flex w-20 h-10 bg-slate-100 rounded-full text-sm font-light text-slate-400 items-center justify-center mr-1 lg:mx-3">
-									<IoBus className="text-gradient-start mx-0.5" />
-									<p></p>
-								</div>
+								{plateObj[`${stop.StopUID}_${stop.EtaDirection}`]
+									&& (
+										<div className="flex absolute right-0 w-24 h-9 bg-slate-100/75 rounded-full drop-shadow-sm items-center justify-center ">
+											<IoBus className="text-gradient-start mx-0.5" />
+											<p className="text-sm font-light text-slate-400">{plateObj[`${stop.StopUID}_${stop.EtaDirection}`]}</p>
+										</div>
+									)}
 
 							</div>
 						</div>
@@ -97,7 +88,16 @@ const BusStopStatus = ({ stopData, plateNumb }) => {
 						<div className={`${isFirstItem ? 'absolute -right-3 w-0.5 h-10 bg-slate-200 mt-8 ' : 'absolute -right-3 w-0.5 h-16 py-6 bg-slate-200'}`} >
 
 							<div className="relative h-2 w-2 right-[3px] 
-													after:content[''] rounded-full border-[2px] border-slate-200 bg-white"/>
+													after:content[''] rounded-full border-[2px] border-slate-200 bg-white">
+								{/* 即將到站的閃爍點點 */}
+								{(plateObj[`${stop.StopUID}_${stop.EtaDirection}`]) &&
+									(
+										<span class="relative flex h-2 w-2">
+											<span class="animate-ping absolute right-[2px] bottom-[2px] inline-flex h-full w-full rounded-full bg-gradient-start opacity-70"></span>
+											<span class="absolute right-[2px] bottom-[2px] rounded-full h-2 w-2 bg-gradient-start"></span>
+										</span>
+									)}
+							</div>
 						</div>
 					</li>
 				)
