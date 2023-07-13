@@ -316,7 +316,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 										onClick={toggleMap}>
 										展開地圖
 									</button>
-
 								</div>
 
 
@@ -354,9 +353,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 											plateNumb={plateNumb} />
 									</ul>
 								</main>
-
 							</div>
-
 						</div>
 
 						<div className="fixed w-full z-10 bottom-0">

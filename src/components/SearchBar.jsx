@@ -54,7 +54,6 @@ const SearchBar = ({ routeNumber, setRouteNumber, setRouteName, city, setCity })
 		} catch (error) {
 			console.log('error', error);
 		}
-
 	}, [city, routeNumber]);
 
 	console.log('response', response);
