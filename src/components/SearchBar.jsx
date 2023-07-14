@@ -63,7 +63,7 @@ const SearchBar = ({ routeNumber, setRouteNumber, setRouteName, city, setCity })
                md:w-8/12 lg:w-1/2">
 			<div>
 				<select name="dropdown" id="dropdown"
-					className="w-full text-nav-dark text-sm text-center rounded-l-lg focus:outline-none"
+					className="w-full bg-white text-nav-dark text-sm text-center rounded-l-lg focus:outline-none"
 					onChange={handleCityValue}>
 					{cityList.map((item) => (
 						<option key={item.city_en}>
