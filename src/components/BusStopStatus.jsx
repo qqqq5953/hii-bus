@@ -30,10 +30,10 @@ const BusStopStatus = ({ stopData, plateNumb }) => {
 		<>
 			{stopData.map((stop, index) => {
 				const isFirstItem = index === 0;
-				// const isLastItem = index === stopData.length - 1;
+				const isLastItem = index === (stopData.length - 1);
 				return (
 					<li className="flex items-center py-3 
-						first:pt-0 last:pb-0 relative" key={stop.StopUID}>
+						first:pt-0 last:pb-6 lg:last:pb-0 relative" key={stop.StopUID}>
 						<div className="flex items-center">
 							<div className="flex items-center">
 								{/* 判斷站牌狀態＆到站時間 */}
@@ -85,7 +85,7 @@ const BusStopStatus = ({ stopData, plateNumb }) => {
 						</div>
 
 						{/* 旁邊的點點 */}
-						<div className={`${isFirstItem ? 'absolute -right-3 w-0.5 h-10 bg-slate-200 mt-8 ' : 'absolute -right-3 w-0.5 h-16 py-6 bg-slate-200'}`} >
+						<div className={`${isFirstItem ? 'absolute -right-3 w-0.5 h-10 mt-8 bg-slate-200' : isLastItem ? 'absolute -right-3 w-0.5 h-8 pt-6 mb-7 bg-slate-200' : 'absolute -right-3 w-0.5 h-16 py-6 bg-slate-200'}`} >
 
 							<div className="relative h-2 w-2 right-[3px] 
 													after:content[''] rounded-full border-[2px] border-slate-200 bg-white">

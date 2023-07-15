@@ -11,14 +11,14 @@ body {
 }
 
 .animate-slide{
-	  animation: slide-right 15s infinite linear; /*動畫名稱、一次動畫時間為幾秒、播放次數、播放方向*/
+	  animation: slide-right 20s infinite alternate linear; /*動畫名稱、一次動畫時間為幾秒、播放次數、播放方向*/
 }
 @keyframes slide-right {
   from {
     left: -20%;
   }
   to {
-    left: 100%;
+    left: 65%;
   }
 }
 

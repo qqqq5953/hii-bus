@@ -290,7 +290,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 										md:static
 										lg:flex lg:h-full lg:p-5 lg:bg-gray-100">
 							{/* 地圖來囉 */}
-							<div className="absolute w-full h-[300px] top-0 -z-10
+							<div className="hidden
 						md:block md:h-[400px] md:w-full md:sticky md:z-10
 						lg:w-11/12 lg:h-[650px]">
 								<BusMap
@@ -299,6 +299,14 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 									stopData={stopData} />
 							</div>
 
+							{showMap === true &&
+								(<div className="block absolute w-full h-[300px] top-0
+								md:hidden lg:hidden">
+									<BusMap
+										routeName={routeName}
+										finalRoute={finalRoute}
+										stopData={stopData} />
+								</div>)}
 
 							{/* md 以上不顯示返回及顯示地圖鍵 地圖直接顯示 */}
 							<div className={`${showMap ? "absolute top-[300px]" : "absolute top-0"} 
