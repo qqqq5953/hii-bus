@@ -11,14 +11,11 @@ const NearByMap = ({ finalNearbyStops, location }) => {
 			distance: item.Distance,
 		}
 	});
-	// console.log('markers', markers);
-	// console.log('地圖內 finalNearbyStops', finalNearbyStops);
 
 	// 取附近站牌的中心點
 	const userLat = location.coordinates?.lat;
 	const userLon = location.coordinates?.lon;
 	const centerCoordinates = [userLat, userLon];
-	// const centerCoordinates = markers[0]?.geocode;
 	console.log("centerCoordinates", centerCoordinates);
 
 	// 建立站牌的 marker
@@ -45,7 +42,7 @@ const NearByMap = ({ finalNearbyStops, location }) => {
 				&& centerCoordinates[1] !== ""
 				&&
 				(<MapContainer className="block object-cover h-full"
-					center={centerCoordinates} zoom={16.5} >
+					center={centerCoordinates} zoom={16} >
 					<TileLayer
 						attribution='Tiles &copy; Esri &mdash; '
 						url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"

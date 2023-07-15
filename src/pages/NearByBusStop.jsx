@@ -84,9 +84,8 @@ const NearByBusStop = ({ city }) => {
 		} else {
 			continue;
 		}
-		// console.log("user distance", distance);
 	}
-	console.log("nearbyStops", nearbyStops);
+
 
 	// 剔除重複的站牌
 	const finalNearbyStops = [];
@@ -125,7 +124,7 @@ const NearByBusStop = ({ city }) => {
 					<Navbar />
 					<main className="h-full lg:flex">
 						{/* 地圖區塊 */}
-						<div className="h-3/5 md:h-1/2
+						<div className="h-1/2 md:h-1/2
 								lg:min-h-screen lg:w-2/3">
 							<NearByMap className="w-auto"
 								finalNearbyStops={finalNearbyStops}

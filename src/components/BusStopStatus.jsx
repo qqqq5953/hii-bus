@@ -57,7 +57,7 @@ const BusStopStatus = ({ stopData, plateNumb }) => {
 													fontSize='12px'
 													fontColor='#8C90AB'>尚未發車
 												</Button >) :
-												stop.EstimateTime <= 120 ?
+												stop.EstimateTime <= 150 ?
 													<Button backgroundColor="#FF6464"
 														fontSize='12px'
 														fontColor='#FFF'>

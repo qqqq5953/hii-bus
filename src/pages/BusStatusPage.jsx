@@ -71,9 +71,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 			navigate("/NotFound");
 			return;
 		}
-		// console.log('etaRes', etaRes);
-		// console.log('stopRes', stopRes);
-		// console.log('plateNumbRes', plateNumbRes);
 
 
 		// #1 取出需要的欄位
@@ -85,7 +82,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 				StopStatus: eta.StopStatus,
 			}
 		});
-		// console.log('etas', etas);
 
 		const stops = stopRes.map((item) => {
 			return {
@@ -94,7 +90,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 				stops: item.Stops
 			}
 		});
-		// console.log('stops', stops);
 
 		const plateNumbs = plateNumbRes.map((plate) => {
 			return {
@@ -103,7 +98,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 			}
 		});
 		setPlateNum(plateNumbs);
-		// console.log("plateNumbs", plateNumbs);
 
 
 		// #2 forEach 分別取出物件中的 key 及 value 並組裝成 {StopUID:EstimateTime} 的資料型態
@@ -121,7 +115,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 			stopObj[StopUID] = StopStatus;
 			return stopObj;
 		}, {});
-		// console.log('stopStatusObj', stopStatusObj);
 
 		// 取出方向
 		const etaDirectionObj = etas.reduce((directionObj, item) => {
@@ -135,10 +128,8 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		const routeObj = {};
 		stops.forEach(item => {
 			const { key, stops } = item  // 解構取值
-			// const key = `${subRouteName}_${direction}`
 			routeObj[key] = stops
 		});
-		// console.log('routeObj', routeObj);
 
 
 		// #3 組合資料（上面的 routeObj 還缺 EstimateTime 資料）
@@ -162,7 +153,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 			// 第一圈先取出該路線的站牌資料
 			innerFinalRoute[routeAndDirection] = defaultStops;
 		}
-		// console.log('innerFinalRoute', innerFinalRoute);
 
 		// 畫面初始要跑預設:去程路線
 		const defaultDirection = `${routeName}_0`;
@@ -217,21 +207,15 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		}
 		setStopData(newStopData); // 帶入搜尋到的公車路線
 		const direction = routeDirection.split("_")[1];
-		// console.log('direction', direction);
-		// console.log('finalRoute', finalRoute);
 
 
 		if (direction === "0") {
-			// console.log('去程');
 			setDirectionFromStyle(defaultButtonStyle + " " + selectStyle);
 			setDirectionToStyle(defaultButtonStyle + " " + unSelectStyle);
 		} else {
-			// console.log('回程');
 			setDirectionFromStyle(defaultButtonStyle + " " + unSelectStyle);
 			setDirectionToStyle(defaultButtonStyle + " " + selectStyle);
 		}
-		// console.log('directionFromStyle', directionFromStyle);
-		// console.log('directionToStyle', directionToStyle);
 	}, [routeDirection]);
 
 
@@ -272,10 +256,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 	const toggleMap = () => {
 		setShowMap(!showMap);
 	}
-	// console.log("showMap", showMap);
 
-	// console.log('StopData', stopData);
-	// console.log("plateNumb", plateNumb);
 
 	return (
 		<>
@@ -353,7 +334,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 											</button>}
 										</div>
 									)}
-
 
 									{/* 公車到站狀態 */}
 									<ul className="px-2 py-3 divide-y divide-slate-200 md:py-6 lg:py-4">
