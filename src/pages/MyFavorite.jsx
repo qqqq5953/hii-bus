@@ -14,7 +14,6 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 			const updatedFavorites = favorites.filter((item) => item.id !== itemId);
 			localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
 		}
-		console.log('removeFavorites');
 	}
 
 	// 從 localStorage 讀取最愛：畫面初始渲染時讀取
@@ -24,10 +23,7 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 		if (storedFavorites) {
 			setFavorites(JSON.parse(storedFavorites));
 		}
-		console.log('storedFavorites', storedFavorites);
 	}, []);
-
-	console.log('favorites', favorites);
 
 	return (
 		<>
@@ -35,17 +31,17 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 							md:bg-opacity-0">
 				<Navbar />
 
-				<div className="justify-center flex flex-cols-3 items-center 
+				<div className="container mx-auto justify-center flex flex-cols-3 items-center 
 								md:mt-8">
 					<div className="bg-white w-full h-auto 
 									md:w-5/6 md:rounded-lg md:px-2
 			                        lg:w-3/4">
 						<ul role="list" className="text-center p-1 divide-y divide-slate-200 lg:px-10 py-6">
-							<li className="flex text-sm px-3 py-2 first:pt-0 text-gray-400
+							<li className="flex text-sm py-2 first:pt-0 text-gray-400
 										   md:text-lg">
-								<p className="w-1/3">公車路線</p>
-								<p className="w-1/3">起始站與終點站</p>
-								<p className="w-1/3 text-center">移除收藏</p>
+								<p className="w-1/4">公車路線</p>
+								<p className="w-2/4">起始站與終點站</p>
+								<p className="w-1/4 text-center">移除收藏</p>
 							</li>
 
 							{favorites.length === 0 &&
@@ -66,19 +62,19 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 								</div>)}
 
 							{favorites.map((item) => (
-								<li className="text-center hover:bg-gray-100 flex px-2 py-4"
+								<li className="text-center hover:bg-gray-100 flex py-4"
 									key={item.id}>
-									<p className="w-1/3 font-semibold text-nav-dark
+									<p className="w-1/4 font-semibold text-nav-dark
  										md:text-lg">
 										{item.routeName}
 									</p>
-									<div className="flex w-1/3 justify-center items-center">
-										<p className="text-nav-dark text-md">
+									<div className="flex w-2/4 justify-center items-center">
+										<p className="text-nav-dark">
 											{item.from}</p>
 										<p className="text-highlight px-1"><IoArrowForwardOutline /></p>
-										<p>{item.to}</p>
+										<p className="text-nav-dark">{item.to}</p>
 									</div>
-									<button className="w-1/3 flex justify-center">
+									<button className="w-1/4 flex justify-center">
 										<IoHeart className="text-2xl text-highlight"
 											onClick={() => removeFavorites(item.id)} />
 									</button>

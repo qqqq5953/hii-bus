@@ -34,7 +34,6 @@ const NearByBusStop = ({ city }) => {
 			}
 		})
 		const stopData = StopsRes.data;
-		// console.log("附近站牌 stopData", stopData);
 
 		// 取出各站牌位置及名稱
 		const result = stopData.map((stop) => {
@@ -98,7 +97,6 @@ const NearByBusStop = ({ city }) => {
 			finalNearbyStops.push(stop);
 		}
 	})
-	console.log("finalNearbyStops", finalNearbyStops);
 
 
 	useEffect(() => {
@@ -134,7 +132,7 @@ const NearByBusStop = ({ city }) => {
 						</div>
 
 						{/* 站牌資訊 */}
-						<div className="h-2/5 px-5 pt-5 bg-white overflow-y-auto
+						<div className="h-1/2 px-5 pt-5 bg-white overflow-y-auto
 								md:h-1/2 md:px-12 md:pt-8 md:overflow-y-auto
 								lg:w-1/3 lg:min-h-screen lg:px-10 lg:pt-8">
 							<div className="flex text-nav-dark justify-between">
