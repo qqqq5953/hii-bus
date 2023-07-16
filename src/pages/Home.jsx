@@ -10,7 +10,6 @@ import DBackground from "../images/D-bg.svg";
 import Bus from "../images/M-bus-gif.png";
 
 
-
 const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setCity }) => {
 	return (
 		<>
