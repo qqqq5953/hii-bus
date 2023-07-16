@@ -21,7 +21,7 @@ const Navbar = () => {
 						<Link className="flex text-white hover:text-yellow-400"
 							id="myLocation"
 							to="/nearbystop">
-							<IoLocationSharp className="mx-3 md:mr-1" size={22} />
+							<IoLocationSharp className="mx-4 md:mr-1" size={22} />
 							<span className="hidden md:block font-light mr-3">附近站牌</span>
 						</Link>
 						<Link className="flex text-white hover:text-yellow-400"
