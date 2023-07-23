@@ -62,8 +62,8 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 								</div>)}
 
 							{favorites.map((item) => (
-								<li className="text-center hover:bg-gray-100 flex py-4"
-									key={item.id}>
+								<Link className="text-center hover:bg-gray-100 flex py-4"
+									key={item.id} to={`/${item.city}/${item.routeName}`}>
 									<p className="w-1/4 font-semibold text-nav-dark
  										md:text-lg">
 										{item.routeName}
@@ -74,11 +74,14 @@ const MyFavorite = ({ favorites, setFavorites }) => {
 										<p className="text-highlight px-1"><IoArrowForwardOutline /></p>
 										<p className="text-nav-dark">{item.to}</p>
 									</div>
-									<button className="w-1/4 flex justify-center">
-										<IoHeart className="text-2xl text-highlight"
-											onClick={() => removeFavorites(item.id)} />
+									<button className="w-1/4 flex justify-center"
+										onClick={(event) => {
+											event.preventDefault();
+											removeFavorites(item.id);
+										}}>
+										<IoHeart className="text-2xl text-highlight" />
 									</button>
-								</li>
+								</Link>
 							))}
 						</ul>
 					</div>

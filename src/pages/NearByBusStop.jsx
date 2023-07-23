@@ -3,7 +3,6 @@ import axios from "axios";
 import { IoLocationSharp, IoReload } from "react-icons/io5";
 import useGeolocation from "../util/useGeolocation";
 import getAuthorizationHeader from "../util/getAuthorizationHeader";
-import cityList from "../data/cityList";
 import NearByMap from "../util/NearByMap";
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
@@ -11,17 +10,11 @@ import Footer from "../components/Footer";
 import Loading from "../components/Loading";
 
 
-const NearByBusStop = ({ city }) => {
+const NearByBusStop = ({ CityObj, city }) => {
 	const [stopInfo, setStopInfo] = useState({});
 	const [isLoading, setIsLoading] = useState(true);
 	const api = `https://tdx.transportdata.tw/api/basic/v2/Bus/`;
-	// 把 city 陣列轉成中英對照的物件型態 ex. {"台北市" : "Taipei"}
-	const CityObj = cityList.reduce((acc, item) => {
-		const chName = item.city_zh;
-		const enName = item.city_en;
-		acc[chName] = enName;
-		return acc;
-	}, {});
+
 
 	// 打API先跑該縣市全部站牌
 	const getAllStops = async () => {

@@ -1,8 +1,10 @@
 import { IoCode, IoHeart, IoArrowBackCircleOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-const BusInformation = ({ routeName, from, to, getButtonClassName, addToFavorites }) => {
+const BusInformation = ({ CityObj, routeName, from, to, city, getButtonClassName, addToFavorites }) => {
 	const navigate = useNavigate();
+	console.log("BusInformation city", city);
+	console.log("cityobj", CityObj);
 
 	return (
 		<>
@@ -27,7 +29,7 @@ const BusInformation = ({ routeName, from, to, getButtonClassName, addToFavorite
 				<div>
 					<button>
 						<IoHeart className={`${getButtonClassName()} text-2xl mr-3`}
-							onClick={() => addToFavorites({ id: routeName, routeName: routeName, from: from, to: to })} />
+							onClick={() => addToFavorites({ id: routeName, city: CityObj[city], routeName: routeName, from: from, to: to })} />
 					</button>
 				</div>
 			</div>

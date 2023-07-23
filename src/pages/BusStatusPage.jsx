@@ -9,10 +9,9 @@ import BusInformation from "../components/BusInformation";
 import Loading from "../components/Loading";
 import getAuthorizationHeader from "../util/getAuthorizationHeader";
 import BusMap from "../util/BusMap";
-import cityList from "../data/cityList";
 
 
-const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites }) => {
+const BusStatusPage = ({ CityObj, city, stopData, setStopData, favorites, setFavorites }) => {
 	const [routeDirection, setRouteDirection] = useState("");
 	const [finalRoute, setFinalRoute] = useState({});
 	const [isLoading, setIsLoading] = useState(true);
@@ -25,16 +24,6 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		rightBtn: false
 	})
 
-
-	// 把 city 陣列轉成中英對照的物件型態 ex. {"台北市" : "Taipei"}
-	const CityObj = cityList.reduce((acc, item) => {
-		const chName = item.city_zh;
-		const enName = item.city_en;
-		acc[chName] = enName;
-		return acc;
-	}, {});
-	// console.log('CityObj', CityObj);
-	// console.log('routeNumber', routeNumber);
 
 	const getAllRoutes = async () => {
 		if (!city) return;
@@ -62,7 +51,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 		});
 
 		const result = await Promise.all([eta, stop, plateNumb]);
-		console.log('result', result);
+		// console.log('result', result);
 		const etaRes = result[0].data;
 		const stopRes = result[1].data;
 		const plateNumbRes = result[2].data;
@@ -239,7 +228,7 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 			// 有重複就移除 localStorage 中的資料
 			const updatedFavorites = favorites.filter((fav) => fav.id !== item.id);
 			localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-			console.log("Item already exists in localStorage");
+			// console.log("Item already exists in localStorage");
 			return;
 		}
 		// 加入新項目至畫面上的資料
@@ -312,7 +301,9 @@ const BusStatusPage = ({ city, stopData, setStopData, favorites, setFavorites })
 								{/* md 以上 路線名稱、起迄站那塊 */}
 								<main className="md:px-2 h-auto">
 									<BusInformation
+										CityObj={CityObj}
 										routeName={routeName}
+										city={city}
 										from={from}
 										to={to}
 										getButtonClassName={getButtonClassName}

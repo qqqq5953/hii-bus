@@ -2,28 +2,12 @@ import Button from "../components/Button";
 import { IoBus } from "react-icons/io5";
 
 const BusStopStatus = ({ stopData, plateNumb }) => {
-	console.log("BusStopStatus內 plateNumb", plateNumb);
-	console.log("BusStopStatus內 stopData", stopData);
-
-
-	// 重組資料型態 {StopUID_Direction: PlateNumb}
-	const stopObj = stopData.reduce((obj, stop) => {
-		const stopKey = `${stop.StopUID}_${stop.EtaDirection}`;
-		const stopValue = stop.StopName.Zh_tw;
-		obj[stopKey] = stopValue;
-		return obj;
-	}, {});
-
 	const plateObj = plateNumb.reduce((obj, plate) => {
 		const plateKey = plate.Key;
 		const plateValue = plate.PlateNumb;
 		obj[plateKey] = plateValue;
 		return obj;
 	}, {});
-
-
-	console.log("stopObj", stopObj);
-	console.log("plateObj", plateObj);
 
 
 	return (
