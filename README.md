@@ -1,4 +1,5 @@
 # Hi Bus! 今天想搭乘哪輛公車呢？
+## 關於 Hi Bus! 你可以：
 
 * 支援裝置瀏覽 | 可在手機、平板與電腦隨時隨地使用Hi Bus!
 * 快速查詢 | 全臺公車路線及動態時刻
@@ -24,6 +25,10 @@
     |- /pages：頁面
     |- /utils：存放取得Leaflet地圖及授權相關工具
 ```
+
+## 使用技術
+
+
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
