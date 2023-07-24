@@ -35,9 +35,9 @@
 * Leaflet
 
 ## 第三方服務
-* TDX API: [查看文件](https://tdx.transportdata.tw/api-service/swagger) [API 申請](https://tdx.transportdata.tw/register)
-* Leaflet: [查看文件](https://leafletjs.com/reference.html)
-* Google Fonts: [查看文件](https://fonts.google.com/)
+* TDX API: [[查看文件](https://tdx.transportdata.tw/api-service/swagger)] [[API 申請](https://tdx.transportdata.tw/register)]
+* Leaflet: [[查看文件](https://leafletjs.com/reference.html)]
+* Google Fonts: [[查看文件](https://fonts.google.com/)]
 
 *© Hi BUS! | Developed by Lucie
 此作品集僅供展示，非用於商業用途。*
