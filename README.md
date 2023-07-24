@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# Hi Bus! 今天想搭乘哪輛公車呢？
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -68,6 +68,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# Hi-bus
-# hii-bus
+
+Hi BUS! 今天想搭乘哪輛公車呢？
 # hii-bus
