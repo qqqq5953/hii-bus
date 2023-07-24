@@ -1,12 +1,29 @@
 # Hi Bus! 今天想搭乘哪輛公車呢？
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+* 支援裝置瀏覽 | 可在手機、平板與電腦隨時隨地使用Hi Bus!
+* 快速查詢 | 全臺公車路線及動態時刻
+* 附近站牌 | 根據您的位置定位附近公車站牌
+* 收藏最愛 | 儲存經常搭乘的公車路線
 
-## Available Scripts
 
-In the project directory, you can run:
+## 系統說明
 
-### `npm start`
+本專案使用 `create-react-app`，並部署到 Github Pages，運行方式使用 `npm` 下載依賴包，`npm start` 運行
+
+* Node 版本 `v18.13.0`
+* npm 版本 `v8.19.3`
+* React 版本 `v18.2.0`
+* React-router-dom 版本 `v6.10.0`
+
+## 資料夾說明
+```
+|- /src
+    |- /components：共用元件
+    |- /data：存放API及城市中英對照資料
+    |- /images：存放Icon、Logo
+    |- /pages：頁面
+    |- /utils：存放取得Leaflet地圖及授權相關工具
+```
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
