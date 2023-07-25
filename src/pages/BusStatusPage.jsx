@@ -122,8 +122,6 @@ const BusStatusPage = ({ CityObj, city, stopData, setStopData, favorites, setFav
 
 
 		// #3 組合資料（上面的 routeObj 還缺 EstimateTime 資料）
-		// for...in (在 routeObj物件中自訂一個 routeName 的屬性)
-		// routeName 範例: 302_1
 		const innerFinalRoute = {};
 		for (const routeAndDirection in routeObj) {
 			const stops = routeObj[routeAndDirection];

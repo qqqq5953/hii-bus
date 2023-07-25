@@ -56,75 +56,76 @@ const SearchBar = ({ routeNumber, setRouteNumber, setRouteName, city, setCity })
 		}
 	}, [city, routeNumber]);
 
-	console.log('response', response);
+	// console.log('response', response);
 
-	return (<>
-		<div className="z-40 relative grid grid-cols-3 divide-x divide-gray-300 py-1.5 w-10/12 mx-auto mt-4 border border-gradient-start rounded-lg bg-white
+	return (
+		<div className="container mx-auto">
+			<div className="mx-auto z-40 relative grid grid-cols-3 divide-x divide-gray-300 py-1.5 w-10/12 mt-4 border border-gradient-start rounded-lg bg-white
                md:w-8/12 lg:w-1/2">
-			<div>
-				<select name="dropdown" id="dropdown"
-					className="w-full bg-white text-nav-dark text-sm text-center rounded-l-lg focus:outline-none"
-					onChange={handleCityValue}>
-					{cityList.map((item) => (
-						<option key={item.city_en}>
-							{item.city_zh}
-						</option>
-					))}
-				</select>
-			</div>
-			<div className="flex col-span-2 bg-white rounded-r-lg">
-				<input type="text" name="search" id="search"
-					placeholder="搜尋公車路線"
-					className="w-full text-nav-dark text-sm text-left pl-3 focus:outline-none"
-					onInput={e => setRouteNumber(e.target.value)}
-					value={routeNumber}
-				/>
-			</div>
-
-			{/* 按鍵面板 */}
-			<div className="block absolute top-full mt-0.5 z-10 rounded-xl bg-white w-full bg-opacity-70 shadow-sm shadow-slate-400/80 focus:outline-none">
-				{/* 搜尋欄空白時 */}
-				{routeNumber === "" &&
-					(<div className="grid grid-cols-5 md:grid-cols-9 gap-2 px-4 py-4 lg:py-8 lg:px-8">
-						{pressUnit.map((option, index) => (
-							<button
-								key={index} value={option}
-								className="w-18 h-10 text-nav-dark text-sm border border-gray-500 rounded-full hover:bg-slate-100"
-								onClick={handleRouteNumber}>
-								{option}
-							</button>))}
-					</div>
-					)}
-
-				{/* 搜尋欄有字且有搜尋結果時 */}
-				{routeNumber !== "" && (response.length) > 0 &&
-					(<ul className="h-72 px-4 mt-2 overflow-y-auto divide-y divide-slate-200 
-					md:px-10 md:mt-3 md:h-60 ">
-						{response.map((route) => (
-							<Link to={`/${route.City}/${route.RouteName.Zh_tw}`} key={route.RouteUID} className="block"
-								onClick={() => setRouteName(route.RouteName.Zh_tw)}>
-								<li className="flex justify-between py-3.5 md:pr-3">
-									<p className="font-bold">{route.RouteName.Zh_tw}</p>
-									<p className="flex font-light items-center text-sm">
-										{route.DepartureStopNameZh}
-										<span className="text-highlight px-1 md:px-2"><IoCode /></span>
-										{route.DestinationStopNameZh}
-									</p>
-								</li>
-							</Link>
+				<div>
+					<select name="dropdown" id="dropdown"
+						className="w-full bg-white text-nav-dark text-sm text-center rounded-l-lg focus:outline-none"
+						onChange={handleCityValue}>
+						{cityList.map((item) => (
+							<option key={item.city_en}>
+								{item.city_zh}
+							</option>
 						))}
-					</ul>)
-				}
+					</select>
+				</div>
+				<div className="flex col-span-2 bg-white rounded-r-lg">
+					<input type="text" name="search" id="search"
+						placeholder="搜尋公車路線"
+						className="w-full text-nav-dark text-sm text-left pl-3 focus:outline-none"
+						onInput={e => setRouteNumber(e.target.value)}
+						value={routeNumber}
+					/>
+				</div>
 
-				{/* 搜尋欄有字但查無結果時 */}
-				{routeNumber !== "" && (response.length) === 0 && (
-					<div className="flex px-4 py-4 items-center justify-center lg:py-6 lg:px-6">
-						<p className="text-nav-dark tracking-wide">查無符合的結果</p>
-					</div>
-				)}
+				{/* 按鍵面板 */}
+				<div className="block absolute top-full mt-0.5 z-10 rounded-xl bg-white w-full bg-opacity-70 shadow-sm shadow-slate-400/80 focus:outline-none">
+					{/* 搜尋欄空白時 */}
+					{routeNumber === "" &&
+						(<div className="grid grid-cols-6 md:grid-cols-9 gap-2 px-4 py-4 lg:py-8 lg:px-8">
+							{pressUnit.map((option, index) => (
+								<button
+									key={index} value={option}
+									className="w-18 h-10 text-nav-dark text-sm border border-gray-500 rounded-full hover:bg-slate-100"
+									onClick={handleRouteNumber}>
+									{option}
+								</button>))}
+						</div>
+						)}
+
+					{/* 搜尋欄有字且有搜尋結果時 */}
+					{routeNumber !== "" && (response.length) > 0 &&
+						(<ul className="h-72 px-4 mt-2 overflow-y-auto divide-y divide-slate-200 
+					md:px-10 md:mt-3 md:h-60 ">
+							{response.map((route) => (
+								<Link to={`/${route.City}/${route.RouteName.Zh_tw}`} key={route.RouteUID} className="block"
+									onClick={() => setRouteName(route.RouteName.Zh_tw)}>
+									<li className="flex justify-between py-3.5 md:pr-3">
+										<p className="font-bold">{route.RouteName.Zh_tw}</p>
+										<p className="flex font-light items-center text-sm">
+											{route.DepartureStopNameZh}
+											<span className="text-highlight px-1 md:px-2"><IoCode /></span>
+											{route.DestinationStopNameZh}
+										</p>
+									</li>
+								</Link>
+							))}
+						</ul>)
+					}
+
+					{/* 搜尋欄有字但查無結果時 */}
+					{routeNumber !== "" && (response.length) === 0 && (
+						<div className="flex px-4 py-4 items-center justify-center lg:py-6 lg:px-6">
+							<p className="text-nav-dark tracking-wide">查無符合的結果</p>
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
-	</>
 	)
 }
 
