@@ -9,7 +9,7 @@ import DBackground from "../images/D-bg.svg";
 import Bus from "../images/M-bus-gif.png";
 
 
-const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setCity }) => {
+const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setCity, CityObj }) => {
 	return (
 		<>
 			<div className="h-screen">
@@ -28,7 +28,8 @@ const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setC
 						routeName={routeName}
 						setRouteName={setRouteName}
 						city={city}
-						setCity={setCity} />
+						setCity={setCity}
+						CityObj={CityObj} />
 
 					{/* 背景圖 */}
 					<div>

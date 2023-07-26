@@ -11,7 +11,7 @@ import cityList from "./data/cityList";
 function App() {
   const [routeNumber, setRouteNumber] = useState(""); // 搜尋公車路線
   const [routeName, setRouteName] = useState("");
-  const [city, setCity] = useState('臺北市'); // choose city
+  const [city, setCity] = useState('臺北市');
   const [stopData, setStopData] = useState([]); // 整理好的站牌資料
   const [favorites, setFavorites] = useState([]);
 
@@ -33,15 +33,16 @@ function App() {
             routeName={routeName}
             setRouteName={setRouteName}
             setCity={setCity}
-            city={city} />}>
+            city={city}
+            CityObj={CityObj} />}>
         </Route>
 
         <Route path="/myfavorite"
           element={<MyFavorite
             favorites={favorites}
-            setFavorites={setFavorites} 
+            setFavorites={setFavorites}
             city={city}
-            routeName={routeName}/>}></Route>
+            routeName={routeName} />}></Route>
 
         <Route path="/:cityselect/:routeName"
           element={<BusStatusPage
