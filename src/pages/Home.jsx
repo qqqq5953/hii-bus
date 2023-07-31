@@ -1,6 +1,7 @@
 import Footer from "../components/Footer";
 import SearchBar from "../components/SearchBar";
 import Navbar from "../components/Navbar";
+import Signup from "../components/Signup";
 import MLogo from "../images/M-logo.svg";
 import DLogo from "../images/D-logo.svg";
 import MBackground from "../images/M-bg.svg";
@@ -22,6 +23,8 @@ const Home = ({ routeNumber, setRouteNumber, routeName, setRouteName, city, setC
 						<h1 className="z-30 font-chinese">今天想搭乘哪輛公車呢？</h1>
 					</div>
 
+					<Signup />
+					
 					<SearchBar
 						routeNumber={routeNumber}
 						setRouteNumber={setRouteNumber}
